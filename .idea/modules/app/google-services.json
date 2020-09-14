@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "657673324183",
+    "firebase_url": "https://distancebetweenapp.firebaseio.com",
+    "project_id": "distancebetweenapp",
+    "storage_bucket": "distancebetweenapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657673324183:android:41b8653dfaf67550180bd2",
+        "android_client_info": {
+          "package_name": "com.robosh.distancebetween"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "657673324183-hg10u9lt402eb19i134gpfeas6nug0fc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.robosh.distancebetween",
+            "certificate_hash": "2c2dae5c590774e1c2a22874c61810a71c89f900"
+          }
+        },
+        {
+          "client_id": "657673324183-ij76mss6cqr4onfv9j61iu2pv46p9a16.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVuasbsXoNP_M9hMQ7OuhGVlGfftjqu6k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "657673324183-ij76mss6cqr4onfv9j61iu2pv46p9a16.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
