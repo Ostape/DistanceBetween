@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+            Timber.d("You have already have permission")
             Toast.makeText(this, "You have already have permission", Toast.LENGTH_SHORT).show()
         } else {
             requestAccessLocationPermission()
@@ -57,6 +59,7 @@ class MainActivity : AppCompatActivity() {
                 .setTitle("Permission needed Title")
                 .setMessage("I need this permission Message")
                 .setPositiveButton("Ok") { dialog, which ->
+                    Timber.d("Request permission from Dialog")
                     ActivityCompat.requestPermissions(
                         this,
                         arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -64,11 +67,13 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
                 .setNegativeButton("cancel") { dialog, which ->
+                    Timber.d("Cancel permission Dialog")
                     dialog.dismiss()
                 }
                 .create()
                 .show()
         } else {
+            Timber.d("Request permission")
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -85,8 +90,10 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == ACCESS_FINE_LOCATION_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Timber.d("Permission GRANTED")
                 Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_SHORT).show()
             } else {
+                Timber.d("Permission DENIED")
                 Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show()
             }
         }
