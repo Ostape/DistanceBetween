@@ -1,7 +1,6 @@
 package com.robosh.distancebetween
 
 import android.Manifest
-import android.content.DialogInterface
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
