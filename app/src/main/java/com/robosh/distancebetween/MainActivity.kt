@@ -25,8 +25,7 @@ class MainActivity : AppCompatActivity() {
         const val ACCESS_FINE_LOCATION_PERMISSION_CODE = 20
     }
 
-    private lateinit var rootNode: FirebaseDatabase
-    private lateinit var reference: DatabaseReference
+
 
     private var foregroundOnlyLocationServiceBound = false
 

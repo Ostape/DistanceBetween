@@ -4,33 +4,112 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.location.Location
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.os.Looper
 import androidx.core.app.NotificationCompat
+import com.google.android.gms.location.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.robosh.distancebetween.MainActivity
 import com.robosh.distancebetween.R
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 class ForegroundLocationService : Service() {
-
-    private val localBinder: Binder = LocalBinder()
-    private var configurationChange = false
-
-
-    private lateinit var notificationManager: NotificationManager
 
     private companion object {
         const val NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL_ID"
         const val NOTIFICATION_ID = 110
-
     }
 
+    private lateinit var rootNode: FirebaseDatabase
+    private lateinit var reference: DatabaseReference
+
+    private lateinit var notificationManager: NotificationManager
+
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    // LocationRequest - Requirements for the location updates, i.e., how often you should receive
+    // updates, the priority, etc.
+    private lateinit var locationRequest: LocationRequest
+
+    // LocationCallback - Called when FusedLocationProviderClient has a new Location.
+    private lateinit var locationCallback: LocationCallback
+
+    // Used only for local storage of the last known location. Usually, this would be saved to your
+    // database, but because this is a simplified sample without a full database, we only need the
+    // last location to create a Notification if the user navigates away from the app.
+    private var currentLocation: Location? = null
+    private val localBinder: Binder = LocalBinder()
+    private var configurationChange = false
+    private var serviceRunningInForeground = false
+
+
+    // TODO add check if GPS is on/off
     override fun onCreate() {
         super.onCreate()
         Timber.d("Service onCreate Callback")
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        locationRequest = LocationRequest().apply {
+            // Sets the desired interval for active location updates. This interval is inexact. You
+            // may not receive updates at all if no location sources are available, or you may
+            // receive them less frequently than requested. You may also receive updates more
+            // frequently than requested if other applications are requesting location at a more
+            // frequent interval.
+            //
+            // IMPORTANT NOTE: Apps running on Android 8.0 and higher devices (regardless of
+            // targetSdkVersion) may receive updates less frequently than this interval when the app
+            // is no longer in the foreground.
+            interval = TimeUnit.SECONDS.toMillis(60)
+
+            // Sets the fastest rate for active location updates. This interval is exact, and your
+            // application will never receive updates more frequently than this value.
+            fastestInterval = TimeUnit.SECONDS.toMillis(10)
+
+            // Sets the maximum time when batched location updates are delivered. Updates may be
+            // delivered sooner than this interval.
+            maxWaitTime = TimeUnit.MINUTES.toMillis(1)
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                super.onLocationResult(locationResult)
+
+                if (locationResult?.lastLocation != null) {
+                    // Normally, you want to save a new location to a database. We are simplifying
+                    // things a bit and just saving it as a local variable, as we only need it again
+                    // if a Notification is created (when user navigates away from app).
+                    currentLocation = locationResult.lastLocation
+
+                    // Notify our Activity that a new location was added. Again, if this was a
+                    // production app, the Activity would be listening for changes to a database
+                    // with new locations, but we are simplifying things a bit to focus on just
+                    // learning the location side of things.
+
+                    // TODO save to DB
+//                    val intent = Intent(ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST)
+//                    intent.putExtra(EXTRA_LOCATION, currentLocation)
+//                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+
+                    // Updates notification content if this service is running as a foreground
+                    // service.
+                    if (serviceRunningInForeground) {
+                        notificationManager.notify(
+                            NOTIFICATION_ID,
+                            createNotification(currentLocation)
+                        )
+                    }
+                } else {
+                    Timber.d("Location information isn't available.")
+                }
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -43,6 +122,7 @@ class ForegroundLocationService : Service() {
 
         stopForeground(true)
         configurationChange = false
+        serviceRunningInForeground = false
         return localBinder
     }
 
@@ -50,7 +130,7 @@ class ForegroundLocationService : Service() {
         Timber.d("Service onRebind method")
 
         stopForeground(true)
-//        serviceRunningInForeground = false
+        serviceRunningInForeground = false
         configurationChange = false
         super.onRebind(intent)
     }
@@ -59,8 +139,9 @@ class ForegroundLocationService : Service() {
         Timber.d("Service onUnbind method")
 
         if (configurationChange.not()) {
-            val notification = createNotification()
+            val notification = createNotification(currentLocation)
             startForeground(NOTIFICATION_ID, notification)
+            serviceRunningInForeground = true
         }
         return true
     }
@@ -68,11 +149,33 @@ class ForegroundLocationService : Service() {
     fun onSubscribe() {
         Timber.d("OnSubscribe to location changes")
         startService(Intent(applicationContext, ForegroundLocationService::class.java))
+
+        try {
+            fusedLocationProviderClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.myLooper()
+            )
+        } catch (exception: SecurityException) {
+            Timber.e("Lost location permissions. Couldn't remove updates. $exception")
+        }
     }
 
     fun onUnSubscribe() {
         Timber.d("onUnSubscribe from location changes")
-        stopSelf()
+        try {
+            val removeTask = fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+            removeTask.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Timber.d("Location Callback removed.")
+                    stopSelf()
+                } else {
+                    Timber.d("Failed to remove Location Callback.")
+                }
+            }
+        } catch (exception: SecurityException) {
+            Timber.e("Lost location permissions. Couldn't remove updates. $exception")
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -80,11 +183,10 @@ class ForegroundLocationService : Service() {
         configurationChange = true
     }
 
-
-    private fun createNotification(): Notification {
+    private fun createNotification(location: Location?): Notification {
         Timber.d("Creating Notification")
         val titleText = "Title notification"
-        val mainNotificationText = "Notification message"
+        val mainNotificationText = "Notification message ${location?.latitude}"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(
@@ -98,9 +200,6 @@ class ForegroundLocationService : Service() {
             .setBigContentTitle(titleText)
 
         val launchActivityIntent = Intent(this, MainActivity::class.java)
-
-//        val cancelIntent = Intent(this, ForegroundLocationService::class.java)
-//        cancelIntent.putExtra(EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION, true)
 
         val activityPendingIntent = PendingIntent.getActivity(
             this, 0, launchActivityIntent, 0
@@ -121,11 +220,6 @@ class ForegroundLocationService : Service() {
                 R.drawable.ic_launcher_foreground, "Launch Activity",
                 activityPendingIntent
             )
-//            .addAction(
-//                R.drawable.ic_cancel,
-//                "Stop service",
-//                servicePendingIntent
-//            )
             .build()
     }
 
