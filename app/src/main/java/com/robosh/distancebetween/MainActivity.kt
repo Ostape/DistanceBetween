@@ -33,6 +33,13 @@ class MainActivity : AppCompatActivity() {
     // Provides location updates for while-in-use feature.
     private var foregroundOnlyLocationService: ForegroundLocationService? = null
 
+    private var isReceivingLocationUpdates: Boolean = false
+
+//            rootNode = FirebaseDatabase.getInstance()
+//            reference = rootNode.getReference("Users")
+//
+//            reference.setValue("Second data storage")
+
     private val foregroundOnlyServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -51,15 +58,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //            rootNode = FirebaseDatabase.getInstance()
-//            reference = rootNode.getReference("Users")
-//
-//            reference.setValue("Second data storage")
-        receiveLocationUpdatesBtn.setOnClickListener {
-            checkForAccessLocationPermission()
+        val sharedPref =
+            getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+        isReceivingLocationUpdates =
+            sharedPref.getBoolean(getString(R.string.is_receiving_location_updates), false)
+
+        if (isReceivingLocationUpdates) {
+            receiveLocationUpdatesBtn.text = getString(R.string.stop_receiving_location)
         }
-        stopBtn.setOnClickListener {
-            foregroundOnlyLocationService?.onUnSubscribe()
+
+        receiveLocationUpdatesBtn.setOnClickListener {
+            if (isReceivingLocationUpdates) {
+                onStopReceiveLocationUpdates()
+            } else {
+                checkForAccessLocationPermission()
+            }
         }
     }
 
@@ -77,14 +90,27 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun isPermissionGranted(): Boolean = ContextCompat.checkSelfPermission(
-        this,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == ACCESS_FINE_LOCATION_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED) {
+                Timber.d("Permission GRANTED")
+                Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_SHORT).show()
+                onStartReceiveLocationUpdates()
+            } else {
+                Timber.d("Permission DENIED")
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     private fun checkForAccessLocationPermission() {
         if (isPermissionGranted()) {
-            foregroundOnlyLocationService?.onSubscribe()
+            onStartReceiveLocationUpdates()
             Timber.d("You have already have permission")
             Toast.makeText(this, "You have already have permission", Toast.LENGTH_SHORT).show()
         } else {
@@ -92,25 +118,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun isPermissionGranted(): Boolean = ContextCompat.checkSelfPermission(
+        this,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+
     private fun requestAccessLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             )
         ) {
+            // todo replace with DialogFragment
             AlertDialog.Builder(this)
+                // todo extract to strings
                 .setTitle("Permission needed Title")
                 .setMessage("I need this permission Message")
-                .setPositiveButton("Ok") { dialog, which ->
+                .setPositiveButton("Ok") { _, _ ->
                     Timber.d("Request permission from Dialog")
-                    foregroundOnlyLocationService?.onSubscribe()
                     ActivityCompat.requestPermissions(
                         this,
                         arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                         ACCESS_FINE_LOCATION_PERMISSION_CODE
                     )
                 }
-                .setNegativeButton("cancel") { dialog, which ->
+                .setNegativeButton("cancel") { dialog, _ ->
                     Timber.d("Cancel permission Dialog")
                     dialog.dismiss()
                 }
@@ -118,7 +150,6 @@ class MainActivity : AppCompatActivity() {
                 .show()
         } else {
             Timber.d("Request permission")
-            foregroundOnlyLocationService?.onSubscribe()
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -127,20 +158,28 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == ACCESS_FINE_LOCATION_PERMISSION_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Timber.d("Permission GRANTED")
-                Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_SHORT).show()
-            } else {
-                Timber.d("Permission DENIED")
-                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show()
-            }
-        }
+    private fun onStopReceiveLocationUpdates() {
+        foregroundOnlyLocationService?.onUnSubscribe()
+        receiveLocationUpdatesBtn.text = getString(R.string.start_receiving_location)
+        isReceivingLocationUpdates = false
+        val sharedPref =
+            getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+        sharedPref.edit().putBoolean(
+            getString(R.string.is_receiving_location_updates),
+            isReceivingLocationUpdates
+        ).apply()
+    }
+
+    private fun onStartReceiveLocationUpdates() {
+        foregroundOnlyLocationService?.onSubscribe()
+        receiveLocationUpdatesBtn.text = getString(R.string.stop_receiving_location)
+        isReceivingLocationUpdates = true
+        // todo extract to extensions
+        val sharedPref =
+            getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+        sharedPref.edit().putBoolean(
+            getString(R.string.is_receiving_location_updates),
+            isReceivingLocationUpdates
+        ).apply()
     }
 }

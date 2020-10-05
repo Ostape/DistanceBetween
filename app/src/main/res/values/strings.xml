@@ -1,3 +1,8 @@
 <resources>
+
+    <string name="preference_file_key">preference_file_key</string>
+    <string name="is_receiving_location_updates">isReceivingLocationUpdates</string>
     <string name="app_name">DistanceBetween</string>
+    <string name="start_receiving_location">Start Receiving Location</string>
+    <string name="stop_receiving_location">Stop Receiving Location</string>
 </resources>
