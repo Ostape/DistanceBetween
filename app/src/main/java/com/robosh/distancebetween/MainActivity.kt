@@ -13,8 +13,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.robosh.distancebetween.locationservice.ForegroundLocationService
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
@@ -25,19 +23,12 @@ class MainActivity : AppCompatActivity() {
         const val ACCESS_FINE_LOCATION_PERMISSION_CODE = 20
     }
 
-
-
     private var foregroundOnlyLocationServiceBound = false
 
     // Provides location updates for while-in-use feature.
     private var foregroundOnlyLocationService: ForegroundLocationService? = null
 
     private var isReceivingLocationUpdates: Boolean = false
-
-//            rootNode = FirebaseDatabase.getInstance()
-//            reference = rootNode.getReference("Users")
-//
-//            reference.setValue("Second data storage")
 
     private val foregroundOnlyServiceConnection = object : ServiceConnection {
 

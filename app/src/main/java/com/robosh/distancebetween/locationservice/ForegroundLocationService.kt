@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.robosh.distancebetween.DatabaseRepository
 import com.robosh.distancebetween.MainActivity
 import com.robosh.distancebetween.R
 import timber.log.Timber
@@ -24,9 +25,6 @@ class ForegroundLocationService : Service() {
         const val NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL_ID"
         const val NOTIFICATION_ID = 110
     }
-
-    private lateinit var rootNode: FirebaseDatabase
-    private lateinit var reference: DatabaseReference
 
     private lateinit var notificationManager: NotificationManager
 
@@ -93,6 +91,7 @@ class ForegroundLocationService : Service() {
                     // learning the location side of things.
 
                     // TODO save to DB
+                    DatabaseRepository.newInstance().setData(currentLocation)
 //                    val intent = Intent(ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST)
 //                    intent.putExtra(EXTRA_LOCATION, currentLocation)
 //                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
