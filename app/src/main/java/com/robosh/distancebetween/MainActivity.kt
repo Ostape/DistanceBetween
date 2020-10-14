@@ -1,19 +1,23 @@
 package com.robosh.distancebetween
 
 import android.Manifest
+import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.IBinder
+import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.robosh.distancebetween.locationservice.ForegroundLocationService
+import com.robosh.distancebetween.widget.LocationWidgetProvider
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
@@ -29,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     private var foregroundOnlyLocationService: ForegroundLocationService? = null
 
     private var isReceivingLocationUpdates: Boolean = false
+
+    private var testInt = 0
 
     private val foregroundOnlyServiceConnection = object : ServiceConnection {
 
@@ -58,11 +64,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         receiveLocationUpdatesBtn.setOnClickListener {
-            if (isReceivingLocationUpdates) {
-                onStopReceiveLocationUpdates()
+            val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+
+            // TODO add stop service when GPS is disabled
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                if (isReceivingLocationUpdates) {
+                    onStopReceiveLocationUpdates()
+                } else {
+                    checkForAccessLocationPermission()
+                }
             } else {
-                checkForAccessLocationPermission()
+                Toast.makeText(this, "Enable GPS!!!", Toast.LENGTH_SHORT).show()
             }
+        }
+        sendBroadcast.setOnClickListener {
+            sendWidgetBroadcast()
         }
     }
 
@@ -171,5 +187,22 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.is_receiving_location_updates),
             isReceivingLocationUpdates
         ).apply()
+    }
+
+    private fun sendWidgetBroadcast() {
+        val thisWidget = ComponentName(applicationContext, LocationWidgetProvider::class.java)
+        val appWidgetManager = AppWidgetManager.getInstance(this.applicationContext)
+        val allWidgetIds: IntArray = appWidgetManager.getAppWidgetIds(thisWidget)
+
+        for (widgetId in allWidgetIds) {
+            // create some random data
+            val remoteViews =
+                RemoteViews(this.applicationContext.packageName, R.layout.widget_location)
+            // Set the text
+            remoteViews.setTextViewText(R.id.exampleWidgetButton, "Random: $testInt")
+            testInt++
+            // Register an onClickListener
+            appWidgetManager.updateAppWidget(widgetId, remoteViews)
+        }
     }
 }

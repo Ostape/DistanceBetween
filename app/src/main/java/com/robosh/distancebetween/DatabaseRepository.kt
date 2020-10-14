@@ -6,11 +6,10 @@ import com.google.firebase.database.FirebaseDatabase
 
 class DatabaseRepository {
 
-    private lateinit var rootNode: FirebaseDatabase
-    private lateinit var reference: DatabaseReference
+    private val rootNode: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private val reference: DatabaseReference
 
     init {
-        rootNode = FirebaseDatabase.getInstance()
         reference = rootNode.getReference("Users")
     }
 
