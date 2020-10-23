@@ -80,6 +80,9 @@ class MainActivity : AppCompatActivity() {
         sendBroadcast.setOnClickListener {
             sendWidgetBroadcast()
         }
+        addNewUser.setOnClickListener {
+            DatabaseRepository.newInstance().saveUser()
+        }
     }
 
     override fun onStart() {
