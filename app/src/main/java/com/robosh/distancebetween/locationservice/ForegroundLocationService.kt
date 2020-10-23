@@ -11,7 +11,7 @@ import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
-import com.robosh.distancebetween.DatabaseRepository
+import com.robosh.distancebetween.repository.RealtimeDatabaseRepository
 import com.robosh.distancebetween.MainActivity
 import com.robosh.distancebetween.R
 import timber.log.Timber
@@ -89,7 +89,7 @@ class ForegroundLocationService : Service() {
                     // learning the location side of things.
 
                     // TODO save to DB
-                    DatabaseRepository.newInstance().saveLocation(currentLocation)
+                    RealtimeDatabaseRepository.newInstance().saveLocation(currentLocation)
 //                    val intent = Intent(ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST)
 //                    intent.putExtra(EXTRA_LOCATION, currentLocation)
 //                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
