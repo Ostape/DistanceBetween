@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.os.Bundle
 import android.os.IBinder
 import android.widget.RemoteViews
@@ -17,10 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.robosh.distancebetween.locationservice.ForegroundLocationService
-import com.robosh.distancebetween.model.User
-import com.robosh.distancebetween.repository.RealtimeDatabaseRepository
 import com.robosh.distancebetween.widget.LocationWidgetProvider
-import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
@@ -55,37 +51,42 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+//        val fragmentManager = supportFragmentManager
+//        val fragmentTransaction = fragmentManager.beginTransaction()
+//        fragmentTransaction.add(R.id.fragmentContainer, SaveUserFragment.newInstance())
+//        fragmentTransaction.commit()
 
-        val sharedPref =
-            getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
-        isReceivingLocationUpdates =
-            sharedPref.getBoolean(getString(R.string.is_receiving_location_updates), false)
-
-        if (isReceivingLocationUpdates) {
-            receiveLocationUpdatesBtn.text = getString(R.string.stop_receiving_location)
-        }
-
-        receiveLocationUpdatesBtn.setOnClickListener {
-            val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
-
-            // TODO add stop service when GPS is disabled
-            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                if (isReceivingLocationUpdates) {
-                    onStopReceiveLocationUpdates()
-                } else {
-                    checkForAccessLocationPermission()
-                }
-            } else {
-                Toast.makeText(this, "Enable GPS!!!", Toast.LENGTH_SHORT).show()
-            }
-        }
-        sendBroadcast.setOnClickListener {
-            sendWidgetBroadcast()
-        }
-        addNewUser.setOnClickListener {
-            RealtimeDatabaseRepository.newInstance()
-                .saveUser(User(name = "Petro", surname = "Poroshenko"))
-        }
+//
+//        val sharedPref =
+//            getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+//        isReceivingLocationUpdates =
+//            sharedPref.getBoolean(getString(R.string.is_receiving_location_updates), false)
+////
+//        if (isReceivingLocationUpdates) {
+//            receiveLocationUpdatesBtn.text = getString(R.string.stop_receiving_location)
+//        }
+//
+//        receiveLocationUpdatesBtn.setOnClickListener {
+//            val locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+//
+//            // TODO add stop service when GPS is disabled
+//            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+//                if (isReceivingLocationUpdates) {
+//                    onStopReceiveLocationUpdates()
+//                } else {
+//                    checkForAccessLocationPermission()
+//                }
+//            } else {
+//                Toast.makeText(this, "Enable GPS!!!", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//        sendBroadcast.setOnClickListener {
+//            sendWidgetBroadcast()
+//        }
+//        addNewUser.setOnClickListener {
+//            RealtimeDatabaseRepository.newInstance()
+//                .saveUser(User(name = "Petro", surname = "Poroshenko"))
+//        }
     }
 
     override fun onStart() {
@@ -112,7 +113,7 @@ class MainActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED) {
                 Timber.d("Permission GRANTED")
                 Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_SHORT).show()
-                onStartReceiveLocationUpdates()
+//                onStartReceiveLocationUpdates()
             } else {
                 Timber.d("Permission DENIED")
                 Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show()
@@ -122,7 +123,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkForAccessLocationPermission() {
         if (isPermissionGranted()) {
-            onStartReceiveLocationUpdates()
+//            onStartReceiveLocationUpdates()
             Timber.d("You have already have permission")
             Toast.makeText(this, "You have already have permission", Toast.LENGTH_SHORT).show()
         } else {
@@ -169,31 +170,31 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
-
-    private fun onStopReceiveLocationUpdates() {
-        foregroundOnlyLocationService?.onUnSubscribe()
-        receiveLocationUpdatesBtn.text = getString(R.string.start_receiving_location)
-        isReceivingLocationUpdates = false
-        val sharedPref =
-            getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
-        sharedPref.edit().putBoolean(
-            getString(R.string.is_receiving_location_updates),
-            isReceivingLocationUpdates
-        ).apply()
-    }
-
-    private fun onStartReceiveLocationUpdates() {
-        foregroundOnlyLocationService?.onSubscribe()
-        receiveLocationUpdatesBtn.text = getString(R.string.stop_receiving_location)
-        isReceivingLocationUpdates = true
-        // todo extract to extensions
-        val sharedPref =
-            getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
-        sharedPref.edit().putBoolean(
-            getString(R.string.is_receiving_location_updates),
-            isReceivingLocationUpdates
-        ).apply()
-    }
+//
+//    private fun onStopReceiveLocationUpdates() {
+//        foregroundOnlyLocationService?.onUnSubscribe()
+//        receiveLocationUpdatesBtn.text = getString(R.string.start_receiving_location)
+//        isReceivingLocationUpdates = false
+//        val sharedPref =
+//            getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+//        sharedPref.edit().putBoolean(
+//            getString(R.string.is_receiving_location_updates),
+//            isReceivingLocationUpdates
+//        ).apply()
+//    }
+//
+//    private fun onStartReceiveLocationUpdates() {
+//        foregroundOnlyLocationService?.onSubscribe()
+//        receiveLocationUpdatesBtn.text = getString(R.string.stop_receiving_location)
+//        isReceivingLocationUpdates = true
+//        // todo extract to extensions
+//        val sharedPref =
+//            getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+//        sharedPref.edit().putBoolean(
+//            getString(R.string.is_receiving_location_updates),
+//            isReceivingLocationUpdates
+//        ).apply()
+//    }
 
     private fun sendWidgetBroadcast() {
         val thisWidget = ComponentName(applicationContext, LocationWidgetProvider::class.java)
