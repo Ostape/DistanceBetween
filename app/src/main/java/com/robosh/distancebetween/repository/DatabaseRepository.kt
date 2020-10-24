@@ -10,4 +10,8 @@ interface DatabaseRepository {
     fun saveUser(user: User): User
 
     fun saveLocation(location: Location?)
+
+    fun getAvailableUserIds(): List<String>
+
+    fun setUserAvailability(availability: Boolean): User
 }

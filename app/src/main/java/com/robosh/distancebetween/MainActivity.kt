@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.robosh.distancebetween.locationservice.ForegroundLocationService
+import com.robosh.distancebetween.model.User
 import com.robosh.distancebetween.repository.RealtimeDatabaseRepository
 import com.robosh.distancebetween.widget.LocationWidgetProvider
 import kotlinx.android.synthetic.main.activity_main.*
@@ -82,7 +83,8 @@ class MainActivity : AppCompatActivity() {
             sendWidgetBroadcast()
         }
         addNewUser.setOnClickListener {
-            RealtimeDatabaseRepository.newInstance().saveUser()
+            RealtimeDatabaseRepository.newInstance()
+                .saveUser(User(name = "Petro", surname = "Poroshenko"))
         }
     }
 

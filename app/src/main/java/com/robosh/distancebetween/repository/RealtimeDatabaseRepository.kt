@@ -1,7 +1,9 @@
 package com.robosh.distancebetween.repository
 
 import android.location.Location
+import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
+import com.google.firebase.iid.FirebaseInstanceId
 import com.robosh.distancebetween.model.User
 
 class RealtimeDatabaseRepository : DatabaseRepository {
@@ -15,12 +17,12 @@ class RealtimeDatabaseRepository : DatabaseRepository {
 
     companion object {
         private var databaseRepository: DatabaseRepository? = null
+
         // todo create singleton or use Koin
         fun newInstance(): DatabaseRepository {
-            if (databaseRepository == null) {
-                databaseRepository = RealtimeDatabaseRepository()
+            return databaseRepository ?: RealtimeDatabaseRepository().also {
+                databaseRepository = it
             }
-            return databaseRepository!!
         }
     }
 
@@ -43,7 +45,18 @@ class RealtimeDatabaseRepository : DatabaseRepository {
     }
 
     override fun saveUser(user: User): User {
-        reference.child("users").push().setValue(User("Petro", "Poroshenko"))
-        TODO("add on Complete listener")
+        val id = FirebaseInstanceId.getInstance().id
+        reference.child("users").push().setValue(user.apply { user.id = id })
+        return User(id, "Petro", "Poroshenko")
+    }
+
+    // this method returns all users that are available for sharing your location
+    override fun getAvailableUserIds(): List<String> {
+        TODO("Not yet implemented")
+    }
+
+    // this method updates availability for sharing your location
+    override fun setUserAvailability(availability: Boolean): User {
+        TODO("Not yet implemented")
     }
 }
