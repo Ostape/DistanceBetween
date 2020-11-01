@@ -46,7 +46,7 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     override fun saveUser(user: User): User {
         val id = FirebaseInstanceId.getInstance().id
         reference.child("users").push().setValue(user.apply { user.id = id })
-        return User(id, "Petro", "Poroshenko")
+        return User(id, "Petro")
     }
 
     // this method returns all users that are available for sharing your location
