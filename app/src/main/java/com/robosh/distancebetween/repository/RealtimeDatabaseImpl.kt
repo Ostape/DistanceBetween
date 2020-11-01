@@ -1,6 +1,8 @@
 package com.robosh.distancebetween.repository
 
 import android.location.Location
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.robosh.distancebetween.model.User
@@ -39,8 +41,11 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         })
     }
 
-    override fun isUserExistsInDatabase(userId: String): Boolean {
-        TODO("Not yet implemented")
+    override fun isUserExistsInDatabase(): LiveData<Boolean> {
+        // todo rework
+        val id = FirebaseInstanceId.getInstance().id
+        val isExists = reference.child("users").key.equals(id)
+        return MutableLiveData<Boolean>().apply { postValue(isExists) }
     }
 
     override fun saveUser(user: User): User {

@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.robosh.distancebetween.databinding.FragmentSaveUserBinding
 import com.robosh.distancebetween.saveuser.viewmodel.SaveUserViewModel
+import timber.log.Timber
 
 class SaveUserFragment : Fragment() {
 
@@ -35,6 +36,12 @@ class SaveUserFragment : Fragment() {
     ): View? {
         // TODO add app bar initialisation
         viewModel = ViewModelProviders.of(this).get(SaveUserViewModel::class.java)
+        viewModel.isUserExistsInDatabase().observe(this, Observer { isExist ->
+            if (isExist) {
+                Timber.d("User already exists in Database")
+                // TODO open next screen
+            }
+        })
         binding = FragmentSaveUserBinding.inflate(inflater, container, false)
         return binding.root
     }

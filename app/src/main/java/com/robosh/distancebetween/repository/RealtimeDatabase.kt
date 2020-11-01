@@ -1,11 +1,12 @@
 package com.robosh.distancebetween.repository
 
 import android.location.Location
+import androidx.lifecycle.LiveData
 import com.robosh.distancebetween.model.User
 
 interface RealtimeDatabase {
 
-    fun isUserExistsInDatabase(userId: String): Boolean
+    fun isUserExistsInDatabase(): LiveData<Boolean>
 
     fun saveUser(user: User): User
 

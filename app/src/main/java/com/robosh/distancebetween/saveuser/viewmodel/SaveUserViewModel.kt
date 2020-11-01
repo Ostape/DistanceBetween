@@ -11,12 +11,10 @@ class SaveUserViewModel : ViewModel() {
 
     // todo singleton with Koin
     private val saveUserRepository: SaveUserRepository = SaveUserRepositoryImpl()
-
-    // todo rename
-    private val misFormValid = MutableLiveData<Boolean>().apply { postValue(false) }
+    private val mutableIsFormValid = MutableLiveData<Boolean>().apply { postValue(false) }
 
     val isFormValid: LiveData<Boolean>
-        get() = misFormValid
+        get() = mutableIsFormValid
 
     var username: String = ""
         set(value) {
@@ -28,11 +26,15 @@ class SaveUserViewModel : ViewModel() {
         saveUserRepository.saveUser(User())
     }
 
+    fun isUserExistsInDatabase(): LiveData<Boolean> {
+        return saveUserRepository.isUserExists()
+    }
+
     private fun validateUsername() {
         if (username.length > 5) {
-            misFormValid.postValue(true)
+            mutableIsFormValid.postValue(true)
         } else {
-            misFormValid.postValue(false)
+            mutableIsFormValid.postValue(false)
         }
     }
 }
