@@ -3,7 +3,7 @@ package com.robosh.distancebetween.repository
 import android.location.Location
 import com.robosh.distancebetween.model.User
 
-interface DatabaseRepository {
+interface RealtimeDatabase {
 
     fun isUserExistsInDatabase(userId: String): Boolean
 

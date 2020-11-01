@@ -1,12 +1,11 @@
 package com.robosh.distancebetween.repository
 
 import android.location.Location
-import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.robosh.distancebetween.model.User
 
-class RealtimeDatabaseRepository : DatabaseRepository {
+class RealtimeDatabaseImpl : RealtimeDatabase {
 
     private val rootNode: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val reference: DatabaseReference
@@ -16,12 +15,12 @@ class RealtimeDatabaseRepository : DatabaseRepository {
     }
 
     companion object {
-        private var databaseRepository: DatabaseRepository? = null
+        private var realtimeDatabase: RealtimeDatabase? = null
 
         // todo create singleton or use Koin
-        fun newInstance(): DatabaseRepository {
-            return databaseRepository ?: RealtimeDatabaseRepository().also {
-                databaseRepository = it
+        fun newInstance(): RealtimeDatabase {
+            return realtimeDatabase ?: RealtimeDatabaseImpl().also {
+                realtimeDatabase = it
             }
         }
     }
