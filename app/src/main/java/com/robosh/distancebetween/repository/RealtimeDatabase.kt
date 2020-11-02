@@ -8,7 +8,7 @@ interface RealtimeDatabase {
 
     fun isUserExistsInDatabase(): LiveData<Boolean>
 
-    fun saveUser(user: User): User
+    fun saveUser(user: User)
 
     fun saveLocation(location: Location?)
 

@@ -38,7 +38,7 @@ class SaveUserFragment : Fragment() {
         viewModel = ViewModelProviders.of(this).get(SaveUserViewModel::class.java)
         viewModel.isUserExistsInDatabase().observe(this, Observer { isExist ->
             if (isExist) {
-                Timber.d("User already exists in Database")
+                Timber.d("User has already exists in Database")
                 // TODO open next screen
             }
         })

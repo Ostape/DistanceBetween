@@ -7,6 +7,6 @@ import com.google.firebase.database.IgnoreExtraProperties
 data class User(
     var id: String = "",
     var username: String? = "",
-    var isUserAvailable: Boolean = true,
+    var isUserAvailable: Boolean = false,
     var location: Location? = null
 )

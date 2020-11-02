@@ -23,7 +23,7 @@ class SaveUserViewModel : ViewModel() {
         }
 
     fun saveUser() {
-        saveUserRepository.saveUser(User())
+        saveUserRepository.saveUser(User(username = username))
     }
 
     fun isUserExistsInDatabase(): LiveData<Boolean> {

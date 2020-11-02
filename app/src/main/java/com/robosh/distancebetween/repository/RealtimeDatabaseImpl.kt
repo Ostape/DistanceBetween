@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.robosh.distancebetween.model.User
+import timber.log.Timber
+import java.util.*
 
 class RealtimeDatabaseImpl : RealtimeDatabase {
 
@@ -42,16 +44,48 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     }
 
     override fun isUserExistsInDatabase(): LiveData<Boolean> {
-        // todo rework
-        val id = FirebaseInstanceId.getInstance().id
-        val isExists = reference.child("users").key.equals(id)
-        return MutableLiveData<Boolean>().apply { postValue(isExists) }
+        val isUserExists = MutableLiveData<Boolean>().apply { postValue(false) }
+
+        val childEventListener = object : ChildEventListener {
+
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e(error.message)
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                Timber.d("onChildMoved")
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                Timber.d("onChildChanged")
+            }
+
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val user = snapshot.getValue(User::class.java)
+                if (user?.id.equals(FirebaseInstanceId.getInstance().id)) {
+                    isUserExists.postValue(true)
+                }
+                Timber.d("onChildAdded")
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                Timber.d("onChildRemoved")
+            }
+        }
+        reference.addChildEventListener(childEventListener)
+        return isUserExists
     }
 
-    override fun saveUser(user: User): User {
+    override fun saveUser(user: User) {
         val id = FirebaseInstanceId.getInstance().id
-        reference.child("users").push().setValue(user.apply { user.id = id })
-        return User(id, "Petro")
+        reference.push().setValue(user.apply { user.id = id })
+            .addOnSuccessListener {
+                // TODO add callback
+            }
+            .addOnFailureListener {
+                Timber.e(it, "Failed to save user")
+                // TODO add callback
+            }
     }
 
     // this method returns all users that are available for sharing your location
