@@ -2,8 +2,8 @@ package com.robosh.distancebetween.saveuser.repository
 
 import androidx.lifecycle.LiveData
 import com.robosh.distancebetween.model.User
-import com.robosh.distancebetween.repository.RealtimeDatabase
-import com.robosh.distancebetween.repository.RealtimeDatabaseImpl
+import com.robosh.distancebetween.database.RealtimeDatabase
+import com.robosh.distancebetween.database.RealtimeDatabaseImpl
 
 class SaveUserRepositoryImpl : SaveUserRepository {
 

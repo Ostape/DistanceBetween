@@ -11,7 +11,7 @@ import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
-import com.robosh.distancebetween.repository.RealtimeDatabaseImpl
+import com.robosh.distancebetween.database.RealtimeDatabaseImpl
 import com.robosh.distancebetween.MainActivity
 import com.robosh.distancebetween.R
 import timber.log.Timber

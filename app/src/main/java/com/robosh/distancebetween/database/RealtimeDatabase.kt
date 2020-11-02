@@ -1,4 +1,4 @@
-package com.robosh.distancebetween.repository
+package com.robosh.distancebetween.database
 
 import android.location.Location
 import androidx.lifecycle.LiveData

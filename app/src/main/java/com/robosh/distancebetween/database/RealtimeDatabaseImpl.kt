@@ -1,4 +1,4 @@
-package com.robosh.distancebetween.repository
+package com.robosh.distancebetween.database
 
 import android.location.Location
 import androidx.lifecycle.LiveData
@@ -7,7 +7,6 @@ import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.robosh.distancebetween.model.User
 import timber.log.Timber
-import java.util.*
 
 class RealtimeDatabaseImpl : RealtimeDatabase {
 
