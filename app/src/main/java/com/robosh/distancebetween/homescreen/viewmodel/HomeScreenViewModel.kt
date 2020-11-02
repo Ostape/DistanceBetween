@@ -1,0 +1,3 @@
+package com.robosh.distancebetween.homescreen.viewmodel
+
+class HomeScreenViewModel
