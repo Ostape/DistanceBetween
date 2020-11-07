@@ -42,9 +42,8 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         })
     }
 
-    override fun isUserExistsInDatabase(): LiveData<Boolean> {
-        val isUserExists = MutableLiveData<Boolean>().apply { postValue(false) }
-
+    override fun isUserExistsInDatabase(): LiveData<User> {
+        val isUserExists = MutableLiveData<User>()
         val childEventListener = object : ChildEventListener {
 
             override fun onCancelled(error: DatabaseError) {
@@ -62,7 +61,7 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val user = snapshot.getValue(User::class.java)
                 if (user?.id.equals(FirebaseInstanceId.getInstance().id)) {
-                    isUserExists.postValue(true)
+                    isUserExists.postValue(user)
                 }
                 Timber.d("onChildAdded")
             }

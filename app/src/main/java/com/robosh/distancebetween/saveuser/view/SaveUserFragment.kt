@@ -8,9 +8,9 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.robosh.distancebetween.R
+import com.robosh.distancebetween.application.INTENT_USERNAME
 import com.robosh.distancebetween.databinding.FragmentSaveUserBinding
 import com.robosh.distancebetween.saveuser.viewmodel.SaveUserViewModel
 import timber.log.Timber
@@ -21,17 +21,6 @@ class SaveUserFragment : Fragment() {
 
     private lateinit var viewModel: SaveUserViewModel
 
-    companion object {
-        fun newInstance(): Fragment {
-            val args = Bundle()
-
-            val fragment =
-                SaveUserFragment()
-            fragment.arguments = args
-            return fragment
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,10 +28,16 @@ class SaveUserFragment : Fragment() {
     ): View? {
         // TODO add app bar initialis
         viewModel = ViewModelProviders.of(this).get(SaveUserViewModel::class.java)
-        viewModel.isUserExistsInDatabase().observe(viewLifecycleOwner, Observer { isExist ->
-            if (isExist) {
+        viewModel.isUserExistsInDatabase().observe(viewLifecycleOwner, Observer { user ->
+            if (user != null) {
                 Timber.d("User has already exists in Database")
-                findNavController().navigate(R.id.action_saveUserFragment_to_homeScreenFragment)
+                val bundle = Bundle().apply {
+                    putString(INTENT_USERNAME, user.username)
+                }
+                findNavController().navigate(
+                    R.id.action_saveUserFragment_to_homeScreenFragment,
+                    bundle
+                )
             }
         })
         binding = FragmentSaveUserBinding.inflate(inflater, container, false)

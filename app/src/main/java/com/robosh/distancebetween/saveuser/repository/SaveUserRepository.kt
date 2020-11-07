@@ -7,5 +7,5 @@ interface SaveUserRepository {
 
     fun saveUser(user: User)
 
-    fun isUserExists(): LiveData<Boolean>
+    fun isUserExists(): LiveData<User>
 }

@@ -14,7 +14,7 @@ class SaveUserRepositoryImpl : SaveUserRepository {
         realtimeDatabase.saveUser(user)
     }
 
-    override fun isUserExists(): LiveData<Boolean> {
+    override fun isUserExists(): LiveData<User> {
         return realtimeDatabase.isUserExistsInDatabase()
     }
 }

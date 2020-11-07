@@ -1,3 +1,7 @@
 package com.robosh.distancebetween.homescreen.viewmodel
 
-class HomeScreenViewModel
+import androidx.lifecycle.ViewModel
+
+class HomeScreenViewModel : ViewModel() {
+
+}
