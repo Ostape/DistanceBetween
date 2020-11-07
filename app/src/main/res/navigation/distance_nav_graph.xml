@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/distance_nav_graph"
+    app:startDestination="@id/saveUserFragment">
+
+    <fragment
+        android:id="@+id/homeScreenFragment"
+        android:name="com.robosh.distancebetween.homescreen.view.HomeScreenFragment"
+        android:label="HomeScreenFragment" />
+
+    <fragment
+        android:id="@+id/saveUserFragment"
+        android:name="com.robosh.distancebetween.saveuser.view.SaveUserFragment"
+        android:label="SaveUserFragment">
+        <action
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/saveUserFragment"
+            android:id="@+id/action_saveUserFragment_to_homeScreenFragment"
+            app:destination="@id/homeScreenFragment" />
+    </fragment>
+</navigation>

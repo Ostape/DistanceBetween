@@ -8,6 +8,9 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import com.robosh.distancebetween.R
 import com.robosh.distancebetween.databinding.FragmentSaveUserBinding
 import com.robosh.distancebetween.saveuser.viewmodel.SaveUserViewModel
 import timber.log.Timber
@@ -34,12 +37,12 @@ class SaveUserFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // TODO add app bar initialisation
+        // TODO add app bar initialis
         viewModel = ViewModelProviders.of(this).get(SaveUserViewModel::class.java)
-        viewModel.isUserExistsInDatabase().observe(this, Observer { isExist ->
+        viewModel.isUserExistsInDatabase().observe(viewLifecycleOwner, Observer { isExist ->
             if (isExist) {
                 Timber.d("User has already exists in Database")
-                // TODO open next screen
+                findNavController().navigate(R.id.action_saveUserFragment_to_homeScreenFragment)
             }
         })
         binding = FragmentSaveUserBinding.inflate(inflater, container, false)
@@ -53,7 +56,7 @@ class SaveUserFragment : Fragment() {
             viewModel.username = text?.toString() ?: ""
         }
 
-        viewModel.isFormValid.observe(this, Observer { valid ->
+        viewModel.isFormValid.observe(viewLifecycleOwner, Observer { valid ->
             binding.saveUserInFirebaseButton.isEnabled = valid ?: false
         })
 
