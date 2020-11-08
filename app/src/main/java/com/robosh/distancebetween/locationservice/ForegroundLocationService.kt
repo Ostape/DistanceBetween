@@ -3,15 +3,12 @@ package com.robosh.distancebetween.locationservice
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.location.Location
-import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
-import com.robosh.distancebetween.database.RealtimeDatabaseImpl
 import com.robosh.distancebetween.MainActivity
 import com.robosh.distancebetween.R
 import timber.log.Timber
@@ -39,10 +36,6 @@ class ForegroundLocationService : Service() {
     // database, but because this is a simplified sample without a full database, we only need the
     // last location to create a Notification if the user navigates away from the app.
     private var currentLocation: Location? = null
-    private val localBinder: Binder = LocalBinder()
-    private var configurationChange = false
-    private var serviceRunningInForeground = false
-
 
     // TODO add check if GPS is on/off
     override fun onCreate() {
@@ -89,19 +82,15 @@ class ForegroundLocationService : Service() {
                     // learning the location side of things.
 
                     // TODO save to DB
-                    RealtimeDatabaseImpl.newInstance().saveLocation(currentLocation)
+//                    RealtimeDatabaseImpl.newInstance().saveLocation(currentLocation)
 //                    val intent = Intent(ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST)
 //                    intent.putExtra(EXTRA_LOCATION, currentLocation)
 //                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
-                    // Updates notification content if this service is running as a foreground
-                    // service.
-                    if (serviceRunningInForeground) {
-                        notificationManager.notify(
-                            NOTIFICATION_ID,
-                            createNotification(currentLocation)
-                        )
-                    }
+                    notificationManager.notify(
+                        NOTIFICATION_ID,
+                        createNotification(currentLocation)
+                    )
                 } else {
                     Timber.d("Location information isn't available.")
                 }
@@ -111,42 +100,8 @@ class ForegroundLocationService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.d("Service onStartCommand Callback")
-        return START_NOT_STICKY
-    }
-
-    override fun onBind(intent: Intent?): IBinder? {
-        Timber.d("Service onBind method")
-
-        stopForeground(true)
-        configurationChange = false
-        serviceRunningInForeground = false
-        return localBinder
-    }
-
-    override fun onRebind(intent: Intent) {
-        Timber.d("Service onRebind method")
-
-        stopForeground(true)
-        serviceRunningInForeground = false
-        configurationChange = false
-        super.onRebind(intent)
-    }
-
-    override fun onUnbind(intent: Intent?): Boolean {
-        Timber.d("Service onUnbind method")
-
-        if (configurationChange.not()) {
-            val notification = createNotification(currentLocation)
-            startForeground(NOTIFICATION_ID, notification)
-            serviceRunningInForeground = true
-        }
-        return true
-    }
-
-    fun onSubscribe() {
-        Timber.d("OnSubscribe to location changes")
-        startService(Intent(applicationContext, ForegroundLocationService::class.java))
-
+        val notification = createNotification(currentLocation)
+        startForeground(NOTIFICATION_ID, notification)
         try {
             fusedLocationProviderClient.requestLocationUpdates(
                 locationRequest,
@@ -156,28 +111,25 @@ class ForegroundLocationService : Service() {
         } catch (exception: SecurityException) {
             Timber.e("Lost location permissions. Couldn't remove updates. $exception")
         }
+        return START_NOT_STICKY
     }
 
-    fun onUnSubscribe() {
-        Timber.d("onUnSubscribe from location changes")
-        try {
-            val removeTask = fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-            removeTask.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Timber.d("Location Callback removed.")
-                    stopSelf()
-                } else {
-                    Timber.d("Failed to remove Location Callback.")
-                }
+    override fun onBind(intent: Intent?): IBinder? {
+        Timber.d("Service onBind method")
+        return null
+    }
+
+    override fun onDestroy() {
+        val removeTask = fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        removeTask.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Timber.d("Location Callback removed.")
+                stopSelf()
+            } else {
+                Timber.d("Failed to remove Location Callback.")
             }
-        } catch (exception: SecurityException) {
-            Timber.e("Lost location permissions. Couldn't remove updates. $exception")
         }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        configurationChange = true
+        super.onDestroy()
     }
 
     private fun createNotification(location: Location?): Notification {
@@ -218,10 +170,5 @@ class ForegroundLocationService : Service() {
                 activityPendingIntent
             )
             .build()
-    }
-
-    inner class LocalBinder : Binder() {
-        internal val service: ForegroundLocationService
-            get() = this@ForegroundLocationService
     }
 }

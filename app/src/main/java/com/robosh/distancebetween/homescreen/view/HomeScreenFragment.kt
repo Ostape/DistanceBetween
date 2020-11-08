@@ -1,12 +1,15 @@
 package com.robosh.distancebetween.homescreen.view
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.IBinder
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +23,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.robosh.distancebetween.application.INTENT_USERNAME
 import com.robosh.distancebetween.databinding.FragmentHomeScreenBinding
 import com.robosh.distancebetween.homescreen.viewmodel.HomeScreenViewModel
+import com.robosh.distancebetween.locationservice.ForegroundLocationService
 import timber.log.Timber
 
 
@@ -65,7 +69,7 @@ class HomeScreenFragment : Fragment() {
             if (grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED) {
                 Timber.d("Permission GRANTED")
                 showToast("Permission GRANTED")
-//                onStartReceiveLocationUpdates()
+                startForegroundLocationService()
             } else {
                 Timber.d("Permission DENIED")
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -74,6 +78,11 @@ class HomeScreenFragment : Fragment() {
                 startActivityForResult(intent, ACCESS_FINE_LOCATION_PERMISSION_CODE)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopForegroundLocationService()
     }
 
     private fun checkForAccessLocationPermission() {
@@ -86,7 +95,7 @@ class HomeScreenFragment : Fragment() {
                 )
                 == PackageManager.PERMISSION_GRANTED
             ) {
-//            onStartReceiveLocationUpdates()
+                startForegroundLocationService()
                 Timber.d("You have already have permission")
                 // todo extract to strings
                 showToast("You have already have permission")
@@ -129,6 +138,16 @@ class HomeScreenFragment : Fragment() {
                 ACCESS_FINE_LOCATION_PERMISSION_CODE
             )
         }
+    }
+
+    private fun startForegroundLocationService() {
+        val serviceIntent = Intent(requireContext(), ForegroundLocationService::class.java)
+        ContextCompat.startForegroundService(requireContext(), serviceIntent)
+    }
+
+    private fun stopForegroundLocationService() {
+        val serviceIntent = Intent(requireContext(), ForegroundLocationService::class.java)
+        requireContext().stopService(serviceIntent)
     }
 
     private fun showToast(text: String) {
