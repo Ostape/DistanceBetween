@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.robosh.distancebetween.connectfriend.viewmodel.ConnectToFriendViewModel
 import com.robosh.distancebetween.databinding.FragmentConnectToFriendBinding
 import timber.log.Timber
@@ -16,6 +17,8 @@ class ConnectToFriendFragment : Fragment() {
     private lateinit var binding: FragmentConnectToFriendBinding
 
     private lateinit var viewModel: ConnectToFriendViewModel
+
+    private lateinit var availableUsersAdapter: AvailableUsersAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,10 +30,19 @@ class ConnectToFriendFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initRecyclerView()
+    }
+
+    private fun initRecyclerView() {
+        binding.availableUsersRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        availableUsersAdapter = AvailableUsersAdapter()
+
         viewModel.getAllAvailableUsers().observe(viewLifecycleOwner, Observer {
+            availableUsersAdapter.setData(it)
             Timber.d(it.toString())
         })
+        binding.availableUsersRecyclerView.adapter = availableUsersAdapter
     }
 }
