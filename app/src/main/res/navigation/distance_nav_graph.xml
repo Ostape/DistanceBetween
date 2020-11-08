@@ -7,7 +7,11 @@
     <fragment
         android:id="@+id/homeScreenFragment"
         android:name="com.robosh.distancebetween.homescreen.view.HomeScreenFragment"
-        android:label="HomeScreenFragment" />
+        android:label="HomeScreenFragment" >
+        <action
+            android:id="@+id/action_homeScreenFragment_to_connectToFriendFragment"
+            app:destination="@id/connectToFriendFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/saveUserFragment"
@@ -19,4 +23,8 @@
             android:id="@+id/action_saveUserFragment_to_homeScreenFragment"
             app:destination="@id/homeScreenFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/connectToFriendFragment"
+        android:name="com.robosh.distancebetween.connectfriend.view.ConnectToFriendFragment"
+        android:label="ConnectToFriendFragment" />
 </navigation>

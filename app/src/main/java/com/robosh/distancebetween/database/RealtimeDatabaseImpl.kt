@@ -7,6 +7,7 @@ import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.robosh.distancebetween.model.User
 import timber.log.Timber
+import java.util.*
 
 class RealtimeDatabaseImpl : RealtimeDatabase {
 
@@ -87,8 +88,50 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     }
 
     // this method returns all users that are available for sharing your location
-    override fun getAvailableUserIds(): List<String> {
-        TODO("Not yet implemented")
+    override fun getAvailableUsers(): LiveData<List<User>> {
+        val availableUsers = ArrayList<User>()
+        val availableUsersLiveData =
+            MutableLiveData<List<User>>().apply { postValue(availableUsers) }
+        val childEventListener = object : ChildEventListener {
+
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e(error.message)
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                Timber.d("onChildMoved")
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                Timber.d("onChildChanged")
+                val value = snapshot.getValue(User::class.java) ?: return
+                val cachedUser = availableUsers.find { it.id == value.id }
+                if (value.isUserAvailable) {
+                    availableUsers.remove(cachedUser)
+                    availableUsers.add(value)
+                } else {
+                    availableUsers.remove(cachedUser)
+                }
+                availableUsersLiveData.postValue(availableUsers)
+            }
+
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val user = snapshot.getValue(User::class.java)
+                if (user?.isUserAvailable == true) {
+                    availableUsers.add(user)
+                }
+                availableUsersLiveData.postValue(availableUsers)
+                Timber.d("onChildAdded")
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                Timber.d("onChildRemoved")
+                availableUsers.remove(snapshot.getValue(User::class.java))
+                availableUsersLiveData.postValue(availableUsers)
+            }
+        }
+        reference.addChildEventListener(childEventListener)
+        return availableUsersLiveData
     }
 
     // this method updates availability for sharing your location

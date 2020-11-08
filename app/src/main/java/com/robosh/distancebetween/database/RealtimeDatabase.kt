@@ -12,7 +12,7 @@ interface RealtimeDatabase {
 
     fun saveLocation(location: Location?)
 
-    fun getAvailableUserIds(): List<String>
+    fun getAvailableUsers(): LiveData<List<User>>
 
     fun setUserAvailability(availability: Boolean): User
 }

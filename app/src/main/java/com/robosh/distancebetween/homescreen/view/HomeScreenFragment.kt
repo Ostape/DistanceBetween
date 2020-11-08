@@ -20,6 +20,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
+import com.robosh.distancebetween.R
 import com.robosh.distancebetween.application.INTENT_USERNAME
 import com.robosh.distancebetween.databinding.FragmentHomeScreenBinding
 import com.robosh.distancebetween.homescreen.viewmodel.HomeScreenViewModel
@@ -53,6 +55,8 @@ class HomeScreenFragment : Fragment() {
         binding.usernameTextView.text = username
         binding.connectToFriendButton.setOnClickListener {
             checkForAccessLocationPermission()
+            // if ok then open screen
+            findNavController().navigate(R.id.action_homeScreenFragment_to_connectToFriendFragment)
         }
         binding.waitForConnectionButton.setOnClickListener {
             checkForAccessLocationPermission()
