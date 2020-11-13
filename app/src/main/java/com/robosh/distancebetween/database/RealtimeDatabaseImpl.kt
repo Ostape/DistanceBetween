@@ -127,6 +127,5 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     override fun setUserAvailabilityAndAddPairedUser(id: String) {
         userReference.child(id).child("userAvailable").setValue(false)
         userReference.child(id).child("connectedFriendId").setValue(currentUserId)
-        userReference.child(currentUserId).child("connectedFriendId").setValue(id)
     }
 }
