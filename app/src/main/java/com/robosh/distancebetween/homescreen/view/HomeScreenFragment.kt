@@ -1,15 +1,12 @@
 package com.robosh.distancebetween.homescreen.view
 
 import android.Manifest
-import android.content.ComponentName
 import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.IBinder
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -60,6 +57,7 @@ class HomeScreenFragment : Fragment() {
         }
         binding.waitForConnectionButton.setOnClickListener {
             checkForAccessLocationPermission()
+            findNavController().navigate(R.id.action_homeScreenFragment_to_waitForFriendFragment)
         }
     }
 
