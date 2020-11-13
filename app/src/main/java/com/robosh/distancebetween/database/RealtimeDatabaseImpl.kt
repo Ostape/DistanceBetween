@@ -11,10 +11,11 @@ import timber.log.Timber
 class RealtimeDatabaseImpl : RealtimeDatabase {
 
     private val rootNode: FirebaseDatabase = FirebaseDatabase.getInstance()
-    private val reference: DatabaseReference
+    private val userReference: DatabaseReference
+    private val currentUserId = FirebaseInstanceId.getInstance().id
 
     init {
-        reference = rootNode.getReference("Users")
+        userReference = rootNode.getReference("Users")
     }
 
     companion object {
@@ -29,17 +30,7 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     }
 
     override fun saveLocation(location: Location?) {
-        reference.setValue("Second data ${location?.longitude}")
-        reference.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-
-            override fun onDataChange(snapshot: DataSnapshot) {
-
-            }
-
-        })
+        userReference.setValue("Second data ${location?.longitude}")
     }
 
     override fun isUserExistsInDatabase(): LiveData<User> {
@@ -60,7 +51,7 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val user = snapshot.getValue(User::class.java)
-                if (snapshot.key.equals(FirebaseInstanceId.getInstance().id)) {
+                if (snapshot.key.equals(currentUserId)) {
                     isUserExists.postValue(user)
                 }
                 Timber.d("onChildAdded")
@@ -70,13 +61,12 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
                 Timber.d("onChildRemoved")
             }
         }
-        reference.addChildEventListener(childEventListener)
+        userReference.addChildEventListener(childEventListener)
         return isUserExists
     }
 
     override fun saveUser(user: User) {
-        val id = FirebaseInstanceId.getInstance().id
-        reference.child(id).setValue(user)
+        userReference.child(currentUserId).setValue(user)
     }
 
     // this method returns all users that are available for sharing your location
@@ -109,7 +99,7 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val user = snapshot.getValue(User::class.java)
-                if (user?.isUserAvailable == true) {
+                if (user?.isUserAvailable == true && snapshot.key != currentUserId) {
                     snapshot.key?.let {
                         user.id = it
                         availableUsers.put(it, user)
@@ -125,7 +115,7 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
                 availableUsersLiveData.postValue(ArrayList(availableUsers.values))
             }
         }
-        reference.addChildEventListener(childEventListener)
+        userReference.addChildEventListener(childEventListener)
         return availableUsersLiveData
     }
 
@@ -135,8 +125,8 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     }
 
     override fun setUserAvailabilityAndAddPairedUser(id: String) {
-        reference.child(id).child("userAvailable").setValue(false)
-        reference.child(id).child("connectedFriendId").setValue(FirebaseInstanceId.getInstance().id)
-        reference.child(FirebaseInstanceId.getInstance().id).child("connectedFriendId").setValue(id)
+        userReference.child(id).child("userAvailable").setValue(false)
+        userReference.child(id).child("connectedFriendId").setValue(currentUserId)
+        userReference.child(currentUserId).child("connectedFriendId").setValue(id)
     }
 }
