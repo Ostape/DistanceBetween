@@ -6,4 +6,6 @@ import com.robosh.distancebetween.model.User
 interface ConnectToFriendRepository {
 
     fun getAllAvailableUsers(): LiveData<List<User>>
+
+    fun setUserAvaiabilityAndAddPairedUser(id: String)
 }

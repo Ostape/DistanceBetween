@@ -8,14 +8,16 @@ import com.robosh.distancebetween.R
 import com.robosh.distancebetween.databinding.AvailableUserViewHolderBinding
 import com.robosh.distancebetween.model.User
 
-class AvailableUsersAdapter : RecyclerView.Adapter<MyVH>() {
+class AvailableUsersAdapter(
+    private val connectFriendButtonCallback: ConnectFriendButtonCallback
+) : RecyclerView.Adapter<MyVH>() {
 
     private val users: MutableList<User> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyVH {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.available_user_view_holder, parent, false)
-        return MyVH(view)
+        return MyVH(view, connectFriendButtonCallback)
     }
 
     override fun getItemCount(): Int {
@@ -33,12 +35,18 @@ class AvailableUsersAdapter : RecyclerView.Adapter<MyVH>() {
     }
 }
 
-class MyVH(view: View) : RecyclerView.ViewHolder(view) {
+class MyVH(view: View, private val connectFriendButtonCallback: ConnectFriendButtonCallback) :
+    RecyclerView.ViewHolder(view) {
 
     private val binding: AvailableUserViewHolderBinding = AvailableUserViewHolderBinding.bind(view)
 
     fun bind(user: User) {
         binding.userId.text = user.id
         binding.usernameTextView.text = user.username
+        binding.shareLocationButton.setOnClickListener {
+            connectFriendButtonCallback.onConnectFriend(
+                user.id
+            )
+        }
     }
 }

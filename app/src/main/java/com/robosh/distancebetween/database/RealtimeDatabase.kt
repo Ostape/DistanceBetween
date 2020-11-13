@@ -15,4 +15,6 @@ interface RealtimeDatabase {
     fun getAvailableUsers(): LiveData<List<User>>
 
     fun setUserAvailability(availability: Boolean): User
+
+    fun setUserAvailabilityAndAddPairedUser(id: String)
 }

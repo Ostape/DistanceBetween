@@ -7,7 +7,6 @@ import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.robosh.distancebetween.model.User
 import timber.log.Timber
-import java.util.*
 
 class RealtimeDatabaseImpl : RealtimeDatabase {
 
@@ -61,7 +60,7 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val user = snapshot.getValue(User::class.java)
-                if (user?.id.equals(FirebaseInstanceId.getInstance().id)) {
+                if (snapshot.key.equals(FirebaseInstanceId.getInstance().id)) {
                     isUserExists.postValue(user)
                 }
                 Timber.d("onChildAdded")
@@ -77,21 +76,14 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
 
     override fun saveUser(user: User) {
         val id = FirebaseInstanceId.getInstance().id
-        reference.push().setValue(user.apply { user.id = id })
-            .addOnSuccessListener {
-                // TODO add callback
-            }
-            .addOnFailureListener {
-                Timber.e(it, "Failed to save user")
-                // TODO add callback
-            }
+        reference.child(id).setValue(user)
     }
 
     // this method returns all users that are available for sharing your location
     override fun getAvailableUsers(): LiveData<List<User>> {
-        val availableUsers = ArrayList<User>()
+        val availableUsers: MutableMap<String, User> = HashMap()
         val availableUsersLiveData =
-            MutableLiveData<List<User>>().apply { postValue(availableUsers) }
+            MutableLiveData<List<User>>().apply { postValue(ArrayList(availableUsers.values)) }
         val childEventListener = object : ChildEventListener {
 
             override fun onCancelled(error: DatabaseError) {
@@ -104,30 +96,33 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 Timber.d("onChildChanged")
-                val value = snapshot.getValue(User::class.java) ?: return
-                val cachedUser = availableUsers.find { it.id == value.id }
-                if (value.isUserAvailable) {
-                    availableUsers.remove(cachedUser)
-                    availableUsers.add(value)
-                } else {
-                    availableUsers.remove(cachedUser)
+                val changedUser = snapshot.getValue(User::class.java) ?: return
+                snapshot.key?.let { key ->
+                    if (changedUser.isUserAvailable) {
+                        availableUsers.put(key, changedUser.apply { id = key })
+                    } else {
+                        availableUsers.remove(key)
+                    }
                 }
-                availableUsersLiveData.postValue(availableUsers)
+                availableUsersLiveData.postValue(ArrayList(availableUsers.values))
             }
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val user = snapshot.getValue(User::class.java)
                 if (user?.isUserAvailable == true) {
-                    availableUsers.add(user)
+                    snapshot.key?.let {
+                        user.id = it
+                        availableUsers.put(it, user)
+                    }
                 }
-                availableUsersLiveData.postValue(availableUsers)
+                availableUsersLiveData.postValue(ArrayList(availableUsers.values))
                 Timber.d("onChildAdded")
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 Timber.d("onChildRemoved")
-                availableUsers.remove(snapshot.getValue(User::class.java))
-                availableUsersLiveData.postValue(availableUsers)
+                availableUsers.remove(snapshot.key)
+                availableUsersLiveData.postValue(ArrayList(availableUsers.values))
             }
         }
         reference.addChildEventListener(childEventListener)
@@ -137,5 +132,11 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     // this method updates availability for sharing your location
     override fun setUserAvailability(availability: Boolean): User {
         TODO("Not yet implemented")
+    }
+
+    override fun setUserAvailabilityAndAddPairedUser(id: String) {
+        reference.child(id).child("userAvailable").setValue(false)
+        reference.child(id).child("connectedFriendId").setValue(FirebaseInstanceId.getInstance().id)
+        reference.child(FirebaseInstanceId.getInstance().id).child("connectedFriendId").setValue(id)
     }
 }

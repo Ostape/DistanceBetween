@@ -12,4 +12,8 @@ class ConnectToFriendRepositoryImpl : ConnectToFriendRepository {
     override fun getAllAvailableUsers(): LiveData<List<User>> {
         return realtimeDatabase.getAvailableUsers()
     }
+
+    override fun setUserAvaiabilityAndAddPairedUser(id: String) {
+        realtimeDatabase.setUserAvailabilityAndAddPairedUser(id)
+    }
 }

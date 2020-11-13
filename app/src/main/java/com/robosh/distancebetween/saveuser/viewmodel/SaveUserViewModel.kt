@@ -31,7 +31,7 @@ class SaveUserViewModel : ViewModel() {
     }
 
     private fun validateUsername() {
-        if (username.length > 5) {
+        if (username.length > 3) {
             mutableIsFormValid.postValue(true)
         } else {
             mutableIsFormValid.postValue(false)

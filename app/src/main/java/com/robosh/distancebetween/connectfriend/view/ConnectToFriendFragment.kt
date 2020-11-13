@@ -12,7 +12,7 @@ import com.robosh.distancebetween.connectfriend.viewmodel.ConnectToFriendViewMod
 import com.robosh.distancebetween.databinding.FragmentConnectToFriendBinding
 import timber.log.Timber
 
-class ConnectToFriendFragment : Fragment() {
+class ConnectToFriendFragment : Fragment(), ConnectFriendButtonCallback {
 
     private lateinit var binding: FragmentConnectToFriendBinding
 
@@ -37,12 +37,16 @@ class ConnectToFriendFragment : Fragment() {
 
     private fun initRecyclerView() {
         binding.availableUsersRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        availableUsersAdapter = AvailableUsersAdapter()
+        availableUsersAdapter = AvailableUsersAdapter(this)
 
         viewModel.getAllAvailableUsers().observe(viewLifecycleOwner, Observer {
             availableUsersAdapter.setData(it)
             Timber.d(it.toString())
         })
         binding.availableUsersRecyclerView.adapter = availableUsersAdapter
+    }
+
+    override fun onConnectFriend(id: String?) {
+        viewModel.pairConnectedUser(id)
     }
 }
