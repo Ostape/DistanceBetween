@@ -17,4 +17,8 @@ interface RealtimeDatabase {
     fun setUserAvailability(availability: Boolean): User
 
     fun setUserAvailabilityAndAddPairedUser(id: String)
+
+    fun makeUserAvailableForSharing()
+
+    fun makeUserNotAvailableForSharing()
 }

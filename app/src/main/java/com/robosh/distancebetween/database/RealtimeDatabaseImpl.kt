@@ -128,4 +128,12 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         userReference.child(id).child("userAvailable").setValue(false)
         userReference.child(id).child("connectedFriendId").setValue(currentUserId)
     }
+
+    override fun makeUserAvailableForSharing() {
+        userReference.child(currentUserId).child("userAvailable").setValue(true)
+    }
+
+    override fun makeUserNotAvailableForSharing() {
+        userReference.child(currentUserId).child("userAvailable").setValue(false)
+    }
 }
