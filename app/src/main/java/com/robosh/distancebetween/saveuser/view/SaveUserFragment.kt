@@ -13,12 +13,10 @@ import com.robosh.distancebetween.R
 import com.robosh.distancebetween.application.INTENT_USERNAME
 import com.robosh.distancebetween.databinding.FragmentSaveUserBinding
 import com.robosh.distancebetween.saveuser.viewmodel.SaveUserViewModel
-import timber.log.Timber
 
 class SaveUserFragment : Fragment() {
 
     private lateinit var binding: FragmentSaveUserBinding
-
     private lateinit var viewModel: SaveUserViewModel
 
     override fun onCreateView(
@@ -26,17 +24,14 @@ class SaveUserFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // TODO add app bar initialis
         viewModel = ViewModelProviders.of(this).get(SaveUserViewModel::class.java)
         viewModel.isUserExistsInDatabase().observe(viewLifecycleOwner, Observer { user ->
-            if (user != null) {
-                Timber.d("User has already exists in Database")
-                val bundle = Bundle().apply {
-                    putString(INTENT_USERNAME, user.username)
-                }
+            user?.let {
                 findNavController().navigate(
                     R.id.action_saveUserFragment_to_homeScreenFragment,
-                    bundle
+                    Bundle().apply {
+                        putString(INTENT_USERNAME, user.username)
+                    }
                 )
             }
         })

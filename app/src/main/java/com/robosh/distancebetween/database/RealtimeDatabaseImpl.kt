@@ -129,11 +129,69 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         userReference.child(id).child("connectedFriendId").setValue(currentUserId)
     }
 
-    override fun makeUserAvailableForSharing() {
+    override fun makeUserAvailableForSharing(): LiveData<User> {
+        val userLiveData = MutableLiveData<User>()
         userReference.child(currentUserId).child("userAvailable").setValue(true)
+        userReference.child(currentUserId).addValueEventListener(object : ValueEventListener {
+
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e(error.message)
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val user = snapshot.getValue(User::class.java)
+                if (user != null) {
+                    snapshot.key?.let {
+                        user.id = it
+                    }
+                }
+                userLiveData.postValue(user)
+            }
+        })
+        return userLiveData
     }
 
     override fun makeUserNotAvailableForSharing() {
         userReference.child(currentUserId).child("userAvailable").setValue(false)
+        userReference.child(currentUserId).child("connectedFriendId").setValue("")
+    }
+
+    override fun getUserById(id: String): LiveData<User> {
+        val user = MutableLiveData<User>()
+        userReference.addChildEventListener(object : ChildEventListener {
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+            }
+
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                if (snapshot.key == id) {
+                    user.postValue(snapshot.getValue(User::class.java))
+                }
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+            }
+
+        })
+        return user
+    }
+
+    override fun rejectUserConnection() {
+        userReference.child(currentUserId).child("userAvailable").setValue(true)
+        userReference.child(currentUserId).child("connectedFriendId").setValue("")
+    }
+
+    override fun acceptUserConnection(
+        requestedUser: User?,
+        currentUser: User?
+    ) {
+        if (currentUser != null) {
+            userReference.child(currentUser.connectedFriendId).child("connectedFriendId").setValue(currentUserId)
+        }
     }
 }

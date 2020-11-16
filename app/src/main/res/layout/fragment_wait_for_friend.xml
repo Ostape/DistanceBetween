@@ -12,10 +12,4 @@
         android:textAlignment="center"
         android:textSize="25sp" />
 
-    <Button
-        android:id="@+id/showDialogTest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="show dialog test" />
-
 </LinearLayout>

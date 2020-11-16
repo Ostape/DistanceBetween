@@ -18,7 +18,16 @@ interface RealtimeDatabase {
 
     fun setUserAvailabilityAndAddPairedUser(id: String)
 
-    fun makeUserAvailableForSharing()
+    fun makeUserAvailableForSharing(): LiveData<User>
 
     fun makeUserNotAvailableForSharing()
+
+    fun getUserById(id: String): LiveData<User>
+
+    fun rejectUserConnection()
+
+    fun acceptUserConnection(
+        requestedUser: User?,
+        currentUser: User?
+    )
 }
