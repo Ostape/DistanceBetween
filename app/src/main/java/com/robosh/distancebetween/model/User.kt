@@ -6,7 +6,7 @@ import com.google.firebase.database.IgnoreExtraProperties
 data class User(
     var username: String = "",
     var isUserAvailable: Boolean = false,
-    var location: MyLocation? = null,
+    var locationCoordinates: LocationCoordinates? = null,
     var connectedFriendId: String = ""
 ) {
     var id: String = ""

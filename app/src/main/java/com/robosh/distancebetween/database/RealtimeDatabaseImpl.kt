@@ -1,11 +1,10 @@
 package com.robosh.distancebetween.database
 
-import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
-import com.robosh.distancebetween.model.MyLocation
+import com.robosh.distancebetween.model.LocationCoordinates
 import com.robosh.distancebetween.model.User
 import timber.log.Timber
 
@@ -30,10 +29,10 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         }
     }
 
-    override fun saveLocation(location: Location?) {
-        val myLocation =
-            MyLocation(longitude = location?.longitude ?: 0.0, latitude = location?.latitude ?: 0.0)
-        userReference.child(currentUserId).child("location").setValue(myLocation)
+    override fun saveLocation(locationCoordinates: LocationCoordinates) {
+//        val myLocation =
+//            MyLocation(longitude = location?.longitude ?: 0.0, latitude = location?.latitude ?: 0.0)
+        userReference.child(currentUserId).child("location").setValue(locationCoordinates)
     }
 
     override fun isUserExistsInDatabase(): LiveData<User> {
@@ -122,11 +121,6 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         return availableUsersLiveData
     }
 
-    // this method updates availability for sharing your location
-    override fun setUserAvailability(availability: Boolean): User {
-        TODO("Not yet implemented")
-    }
-
     override fun setUserAvailabilityAndAddPairedUser(id: String) {
         userReference.child(id).child("userAvailable").setValue(false)
         userReference.child(id).child("connectedFriendId").setValue(currentUserId)
@@ -200,8 +194,16 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     }
 
     override fun getCurrentUser(): LiveData<User> {
+        return getUserByIdListen(currentUserId)
+    }
+
+    override fun getConnectedUser(connectedUserId: String): LiveData<User> {
+        return getUserByIdListen(connectedUserId)
+    }
+
+    private fun getUserByIdListen(id: String): LiveData<User> {
         val user: MutableLiveData<User> = MutableLiveData()
-        userReference.child(currentUserId).addValueEventListener(object : ValueEventListener {
+        userReference.child(id).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 Timber.e(error.message)
             }

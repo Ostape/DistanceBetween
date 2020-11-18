@@ -1,6 +1,6 @@
 package com.robosh.distancebetween.locationservice
 
-import com.robosh.distancebetween.model.MyLocation
+import com.robosh.distancebetween.model.LocationCoordinates
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -8,7 +8,7 @@ import kotlin.math.sqrt
 
 const val EARTH_R = 6371
 
-fun getDistanceFromLatLonInKm(location1: MyLocation, location2: MyLocation): Double {
+fun getDistanceFromLatLonInKm(location1: LocationCoordinates, location2: LocationCoordinates): Double {
     val dLat = degreeToRadian(location2.latitude - location1.latitude)
     val dLon = degreeToRadian(location2.longitude - location1.longitude)
     val a =

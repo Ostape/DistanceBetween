@@ -1,7 +1,7 @@
 package com.robosh.distancebetween.database
 
-import android.location.Location
 import androidx.lifecycle.LiveData
+import com.robosh.distancebetween.model.LocationCoordinates
 import com.robosh.distancebetween.model.User
 
 interface RealtimeDatabase {
@@ -10,11 +10,9 @@ interface RealtimeDatabase {
 
     fun saveUser(user: User)
 
-    fun saveLocation(location: Location?)
+    fun saveLocation(locationCoordinates: LocationCoordinates)
 
     fun getAvailableUsers(): LiveData<List<User>>
-
-    fun setUserAvailability(availability: Boolean): User
 
     fun setUserAvailabilityAndAddPairedUser(id: String)
 
@@ -32,4 +30,6 @@ interface RealtimeDatabase {
     )
 
     fun getCurrentUser(): LiveData<User>
+
+    fun getConnectedUser(connectedUserId: String): LiveData<User>
 }
