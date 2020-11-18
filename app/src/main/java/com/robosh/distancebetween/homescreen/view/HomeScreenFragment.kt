@@ -71,7 +71,7 @@ class HomeScreenFragment : Fragment() {
             if (grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED) {
                 Timber.d("Permission GRANTED")
                 showToast("Permission GRANTED")
-                startForegroundLocationService()
+//                startForegroundLocationService()
             } else {
                 Timber.d("Permission DENIED")
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -84,7 +84,7 @@ class HomeScreenFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        stopForegroundLocationService()
+//        stopForegroundLocationService()
     }
 
     private fun checkForAccessLocationPermission() {
@@ -97,7 +97,7 @@ class HomeScreenFragment : Fragment() {
                 )
                 == PackageManager.PERMISSION_GRANTED
             ) {
-                startForegroundLocationService()
+//                startForegroundLocationService()
                 Timber.d("You have already have permission")
                 // todo extract to strings
                 showToast("You have already have permission")
@@ -142,15 +142,15 @@ class HomeScreenFragment : Fragment() {
         }
     }
 
-    private fun startForegroundLocationService() {
-        val serviceIntent = Intent(requireContext(), ForegroundLocationService::class.java)
-        ContextCompat.startForegroundService(requireContext(), serviceIntent)
-    }
-
-    private fun stopForegroundLocationService() {
-        val serviceIntent = Intent(requireContext(), ForegroundLocationService::class.java)
-        requireContext().stopService(serviceIntent)
-    }
+//    private fun startForegroundLocationService() {
+//        val serviceIntent = Intent(requireContext(), ForegroundLocationService::class.java)
+//        ContextCompat.startForegroundService(requireContext(), serviceIntent)
+//    }
+//
+//    private fun stopForegroundLocationService() {
+//        val serviceIntent = Intent(requireContext(), ForegroundLocationService::class.java)
+//        requireContext().stopService(serviceIntent)
+//    }
 
     private fun showToast(text: String) {
         Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()

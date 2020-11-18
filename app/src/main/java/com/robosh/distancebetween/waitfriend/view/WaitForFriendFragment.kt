@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
+import com.robosh.distancebetween.R
 import com.robosh.distancebetween.databinding.FragmentWaitForFriendBinding
 import com.robosh.distancebetween.model.User
 import com.robosh.distancebetween.waitfriend.viewmodel.WaitForFriendViewModel
@@ -51,6 +53,7 @@ class WaitForFriendFragment : Fragment(), AcceptConnectionDialog.OnAcceptConnect
     override fun onAcceptButtonClicked() {
         Timber.d("onAcceptButtonClicked")
         viewModel.acceptConnection()
+        findNavController().navigate(R.id.action_waitForFriendFragment_to_locationDistanceFragment)
     }
 
     override fun onRejectButtonClicked() {

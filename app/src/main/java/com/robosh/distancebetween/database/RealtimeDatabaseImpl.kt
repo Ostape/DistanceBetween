@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
+import com.robosh.distancebetween.model.MyLocation
 import com.robosh.distancebetween.model.User
 import timber.log.Timber
 
@@ -30,7 +31,10 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     }
 
     override fun saveLocation(location: Location?) {
-        userReference.setValue("Second data ${location?.longitude}")
+        val myLocation =
+            MyLocation(longitude = location?.longitude ?: 0.0, latitude = location?.latitude ?: 0.0)
+        userReference.child(currentUserId).child("location").setValue(myLocation)
+//        userReference.setValue("Second data ${location?.longitude}")
     }
 
     override fun isUserExistsInDatabase(): LiveData<User> {
@@ -191,7 +195,8 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         currentUser: User?
     ) {
         if (currentUser != null) {
-            userReference.child(currentUser.connectedFriendId).child("connectedFriendId").setValue(currentUserId)
+            userReference.child(currentUser.connectedFriendId).child("connectedFriendId")
+                .setValue(currentUserId)
         }
     }
 }

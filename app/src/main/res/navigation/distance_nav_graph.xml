@@ -41,9 +41,37 @@
     <fragment
         android:id="@+id/connectToFriendFragment"
         android:name="com.robosh.distancebetween.connectfriend.view.ConnectToFriendFragment"
-        android:label="ConnectToFriendFragment" />
+        android:label="ConnectToFriendFragment">
+        <action
+            android:id="@+id/action_connectToFriendFragment_to_locationDistanceFragment"
+            app:destination="@id/locationDistanceFragment"
+            app:enterAnim="@anim/slide_in_to_right"
+            app:exitAnim="@anim/slide_out_to_left"
+            app:popEnterAnim="@anim/slide_in_from_left"
+            app:popExitAnim="@anim/slide_out_to_right" />
+    </fragment>
     <fragment
         android:id="@+id/waitForFriendFragment"
         android:name="com.robosh.distancebetween.waitfriend.view.WaitForFriendFragment"
-        android:label="WaitForFriendFragment" />
+        android:label="WaitForFriendFragment">
+        <action
+            android:id="@+id/action_waitForFriendFragment_to_locationDistanceFragment"
+            app:destination="@id/locationDistanceFragment"
+            app:enterAnim="@anim/slide_in_to_right"
+            app:exitAnim="@anim/slide_out_to_left"
+            app:popEnterAnim="@anim/slide_in_from_left"
+            app:popExitAnim="@anim/slide_out_to_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/locationDistanceFragment"
+        android:name="com.robosh.distancebetween.locationscreen.view.LocationDistanceFragment"
+        android:label="LocationDistanceFragment">
+        <action
+            android:id="@+id/action_locationDistanceFragment_to_homeScreenFragment"
+            app:destination="@id/homeScreenFragment"
+            app:enterAnim="@anim/slide_in_to_right"
+            app:exitAnim="@anim/slide_out_to_left"
+            app:popEnterAnim="@anim/slide_in_from_left"
+            app:popExitAnim="@anim/slide_out_to_right" />
+    </fragment>
 </navigation>
