@@ -7,5 +7,7 @@ interface ConnectToFriendRepository {
 
     fun getAllAvailableUsers(): LiveData<List<User>>
 
-    fun setUserAvaiabilityAndAddPairedUser(id: String)
+    fun setUserAvailabilityAndAddPairedUser(id: String)
+
+    fun getCurrentUser(): LiveData<User>
 }

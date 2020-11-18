@@ -16,6 +16,10 @@ class ConnectToFriendViewModel : ViewModel() {
     }
 
     fun pairConnectedUser(id: String?) {
-        connectToFriendRepository.setUserAvaiabilityAndAddPairedUser(id!!)
+        connectToFriendRepository.setUserAvailabilityAndAddPairedUser(id!!)
+    }
+
+    fun getCurrentUser(): LiveData<User> {
+        return connectToFriendRepository.getCurrentUser()
     }
 }

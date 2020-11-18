@@ -34,7 +34,6 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         val myLocation =
             MyLocation(longitude = location?.longitude ?: 0.0, latitude = location?.latitude ?: 0.0)
         userReference.child(currentUserId).child("location").setValue(myLocation)
-//        userReference.setValue("Second data ${location?.longitude}")
     }
 
     override fun isUserExistsInDatabase(): LiveData<User> {
@@ -198,5 +197,19 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
             userReference.child(currentUser.connectedFriendId).child("connectedFriendId")
                 .setValue(currentUserId)
         }
+    }
+
+    override fun getCurrentUser(): LiveData<User> {
+        val user: MutableLiveData<User> = MutableLiveData()
+        userReference.child(currentUserId).addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e(error.message)
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                user.postValue(snapshot.getValue(User::class.java))
+            }
+        })
+        return user
     }
 }

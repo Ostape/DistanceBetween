@@ -30,4 +30,6 @@ interface RealtimeDatabase {
         requestedUser: User?,
         currentUser: User?
     )
+
+    fun getCurrentUser(): LiveData<User>
 }

@@ -1,17 +1,21 @@
 package com.robosh.distancebetween.locationservice
 
 import android.app.*
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.*
 import com.robosh.distancebetween.MainActivity
 import com.robosh.distancebetween.R
 import com.robosh.distancebetween.database.RealtimeDatabaseImpl
+import com.robosh.distancebetween.widget.LocationWidgetProvider
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -72,22 +76,12 @@ class ForegroundLocationService : Service() {
                 super.onLocationResult(locationResult)
 
                 if (locationResult?.lastLocation != null) {
-                    // Normally, you want to save a new location to a database. We are simplifying
-                    // things a bit and just saving it as a local variable, as we only need it again
-                    // if a Notification is created (when user navigates away from app).
                     currentLocation = locationResult.lastLocation
 
-                    // Notify our Activity that a new location was added. Again, if this was a
-                    // production app, the Activity would be listening for changes to a database
-                    // with new locations, but we are simplifying things a bit to focus on just
-                    // learning the location side of things.
-
                     // TODO save to DB
-                    RealtimeDatabaseImpl.newInstance().saveLocation(currentLocation)
-//                    val intent = Intent(ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST)
-//                    intent.putExtra(EXTRA_LOCATION, currentLocation)
-//                    LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
 
+//                    RealtimeDatabaseImpl.newInstance().saveLocation(currentLocation)
+                    sendWidgetBroadcast(currentLocation)
                     notificationManager.notify(
                         NOTIFICATION_ID,
                         createNotification(currentLocation)
@@ -171,5 +165,21 @@ class ForegroundLocationService : Service() {
                 activityPendingIntent
             )
             .build()
+    }
+
+    private fun sendWidgetBroadcast(location: Location?) {
+        val thisWidget = ComponentName(applicationContext, LocationWidgetProvider::class.java)
+        val appWidgetManager = AppWidgetManager.getInstance(this.applicationContext)
+        val allWidgetIds: IntArray = appWidgetManager.getAppWidgetIds(thisWidget)
+
+        for (widgetId in allWidgetIds) {
+            // create some random data
+            val remoteViews =
+                RemoteViews(this.applicationContext.packageName, R.layout.widget_location)
+            // Set the text
+            remoteViews.setTextViewText(R.id.exampleWidgetButton, "Random: ${location?.latitude}")
+            // Register an onClickListener
+            appWidgetManager.updateAppWidget(widgetId, remoteViews)
+        }
     }
 }
