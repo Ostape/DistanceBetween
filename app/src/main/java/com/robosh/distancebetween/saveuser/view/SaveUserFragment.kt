@@ -3,6 +3,8 @@ package com.robosh.distancebetween.saveuser.view
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
@@ -12,7 +14,9 @@ import androidx.navigation.fragment.findNavController
 import com.robosh.distancebetween.R
 import com.robosh.distancebetween.application.INTENT_USERNAME
 import com.robosh.distancebetween.databinding.FragmentSaveUserBinding
+import com.robosh.distancebetween.model.Resource
 import com.robosh.distancebetween.saveuser.viewmodel.SaveUserViewModel
+import timber.log.Timber
 
 class SaveUserFragment : Fragment() {
 
@@ -41,7 +45,6 @@ class SaveUserFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.saveUsernameEditText.doAfterTextChanged { text ->
             viewModel.username = text?.toString() ?: ""
         }
@@ -51,7 +54,34 @@ class SaveUserFragment : Fragment() {
         })
 
         binding.saveUserInFirebaseButton.setOnClickListener {
-            viewModel.saveUser()
+            saveUserListener()
         }
+    }
+
+    private fun saveUserListener() {
+        viewModel.saveUser().observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is Resource.Error -> {
+                    hideLoadingSpinner()
+                    Timber.e(it.message)
+                } // show error screen
+                is Resource.Loading -> {
+                    showLoadingSpinner()
+                    Timber.d("Show Loading Spinner")
+                }
+                is Resource.Success -> {
+                    hideLoadingSpinner()
+                    Timber.d("Show Success Screen")
+                }
+            }
+        })
+    }
+
+    private fun showLoadingSpinner() {
+        binding.progressBar.visibility = VISIBLE
+    }
+
+    private fun hideLoadingSpinner() {
+        binding.progressBar.visibility = GONE
     }
 }

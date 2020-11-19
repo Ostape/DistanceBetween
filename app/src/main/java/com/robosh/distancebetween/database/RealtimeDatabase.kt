@@ -2,13 +2,14 @@ package com.robosh.distancebetween.database
 
 import androidx.lifecycle.LiveData
 import com.robosh.distancebetween.model.LocationCoordinates
+import com.robosh.distancebetween.model.Resource
 import com.robosh.distancebetween.model.User
 
 interface RealtimeDatabase {
 
     fun isUserExistsInDatabase(): LiveData<User>
 
-    fun saveUser(user: User)
+    fun saveUser(user: User): LiveData<Resource<User>>
 
     fun saveLocation(locationCoordinates: LocationCoordinates)
 

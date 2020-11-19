@@ -4,14 +4,15 @@ import androidx.lifecycle.LiveData
 import com.robosh.distancebetween.model.User
 import com.robosh.distancebetween.database.RealtimeDatabase
 import com.robosh.distancebetween.database.RealtimeDatabaseImpl
+import com.robosh.distancebetween.model.Resource
 
 class SaveUserRepositoryImpl : SaveUserRepository {
 
     // todo with Koin
     private val realtimeDatabase: RealtimeDatabase = RealtimeDatabaseImpl.newInstance()
 
-    override fun saveUser(user: User) {
-        realtimeDatabase.saveUser(user)
+    override fun saveUser(user: User): LiveData<Resource<User>> {
+        return realtimeDatabase.saveUser(user)
     }
 
     override fun isUserExists(): LiveData<User> {

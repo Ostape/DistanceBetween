@@ -3,6 +3,7 @@ package com.robosh.distancebetween.saveuser.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.robosh.distancebetween.model.Resource
 import com.robosh.distancebetween.model.User
 import com.robosh.distancebetween.saveuser.repository.SaveUserRepository
 import com.robosh.distancebetween.saveuser.repository.SaveUserRepositoryImpl
@@ -22,8 +23,8 @@ class SaveUserViewModel : ViewModel() {
             validateUsername()
         }
 
-    fun saveUser() {
-        saveUserRepository.saveUser(User(username = username))
+    fun saveUser(): LiveData<Resource<User>> {
+        return saveUserRepository.saveUser(User(username = username))
     }
 
     fun isUserExistsInDatabase(): LiveData<User> {

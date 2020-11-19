@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.robosh.distancebetween.model.LocationCoordinates
+import com.robosh.distancebetween.model.Resource
 import com.robosh.distancebetween.model.User
 import timber.log.Timber
 
@@ -67,8 +68,15 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         return isUserExists
     }
 
-    override fun saveUser(user: User) {
-        userReference.child(currentUserId).setValue(user)
+    override fun saveUser(user: User): LiveData<Resource<User>> {
+        val resourceResult =
+            MutableLiveData<Resource<User>>().apply { postValue(Resource.Loading()) }
+        userReference.child(currentUserId).setValue(user).addOnSuccessListener {
+            resourceResult.postValue(Resource.Success(user))
+        }.addOnFailureListener {
+            resourceResult.postValue(Resource.Error(it.message.toString()))
+        }
+        return resourceResult
     }
 
     // this method returns all users that are available for sharing your location
