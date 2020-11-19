@@ -3,21 +3,25 @@ package com.robosh.distancebetween.saveuser.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.robosh.distancebetween.application.EMPTY_STRING
 import com.robosh.distancebetween.model.Resource
 import com.robosh.distancebetween.model.User
 import com.robosh.distancebetween.saveuser.repository.SaveUserRepository
-import com.robosh.distancebetween.saveuser.repository.SaveUserRepositoryImpl
 
-class SaveUserViewModel : ViewModel() {
+class SaveUserViewModel(
+    private val saveUserRepository: SaveUserRepository
+) : ViewModel() {
 
-    // todo singleton with Koin
-    private val saveUserRepository: SaveUserRepository = SaveUserRepositoryImpl()
+    private companion object {
+        const val MINIMUM_USERNAME_LENGTH = 3
+    }
+
     private val mutableIsFormValid = MutableLiveData<Boolean>().apply { postValue(false) }
 
     val isFormValid: LiveData<Boolean>
         get() = mutableIsFormValid
 
-    var username: String = ""
+    var username: String = EMPTY_STRING
         set(value) {
             field = value
             validateUsername()
@@ -32,7 +36,7 @@ class SaveUserViewModel : ViewModel() {
     }
 
     private fun validateUsername() {
-        if (username.length > 3) {
+        if (username.length > MINIMUM_USERNAME_LENGTH) {
             mutableIsFormValid.postValue(true)
         } else {
             mutableIsFormValid.postValue(false)

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.robosh.distancebetween.R
 import com.robosh.distancebetween.application.EMPTY_STRING
@@ -18,22 +17,23 @@ import com.robosh.distancebetween.databinding.FragmentSaveUserBinding
 import com.robosh.distancebetween.model.Resource
 import com.robosh.distancebetween.model.User
 import com.robosh.distancebetween.saveuser.viewmodel.SaveUserViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class SaveUserFragment : Fragment() {
 
     private lateinit var binding: FragmentSaveUserBinding
-    private lateinit var viewModel: SaveUserViewModel
+    private val saveUserViewModel: SaveUserViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProviders.of(this).get(SaveUserViewModel::class.java)
-        viewModel.isUserExistsInDatabase().observe(viewLifecycleOwner, Observer { resource ->
-            isUserAlreadyExists(resource)
-        })
+        saveUserViewModel.isUserExistsInDatabase()
+            .observe(viewLifecycleOwner, Observer { resource ->
+                isUserAlreadyExists(resource)
+            })
         binding = FragmentSaveUserBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -41,10 +41,10 @@ class SaveUserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.saveUsernameEditText.doAfterTextChanged { text ->
-            viewModel.username = text?.toString() ?: EMPTY_STRING
+            saveUserViewModel.username = text?.toString() ?: EMPTY_STRING
         }
 
-        viewModel.isFormValid.observe(viewLifecycleOwner, Observer { valid ->
+        saveUserViewModel.isFormValid.observe(viewLifecycleOwner, Observer { valid ->
             binding.saveUserInFirebaseButton.isEnabled = valid ?: false
         })
 
@@ -75,7 +75,7 @@ class SaveUserFragment : Fragment() {
     }
 
     private fun saveUserListener() {
-        viewModel.saveUser().observe(viewLifecycleOwner, Observer {
+        saveUserViewModel.saveUser().observe(viewLifecycleOwner, Observer {
             when (it) {
                 is Resource.Error -> {
                     hideLoadingSpinner()
