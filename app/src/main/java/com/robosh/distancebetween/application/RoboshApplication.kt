@@ -3,6 +3,7 @@ package com.robosh.distancebetween.application
 import android.app.Application
 import com.robosh.distancebetween.BuildConfig
 import com.robosh.distancebetween.database.di.databaseModule
+import com.robosh.distancebetween.locationservice.di.locationModule
 import com.robosh.distancebetween.saveuser.di.saveUserModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -17,10 +18,14 @@ class RoboshApplication : Application() {
         if (BuildConfig.DEBUG) {
             Timber.plant(DebugTree())
         }
-        startKoin{
+        startKoin {
             androidLogger()
             androidContext(this@RoboshApplication)
-            modules(saveUserModule, databaseModule)
+            modules(
+                saveUserModule,
+                databaseModule,
+                locationModule
+            )
         }
     }
 }

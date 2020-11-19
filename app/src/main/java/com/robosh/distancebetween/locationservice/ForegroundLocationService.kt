@@ -1,6 +1,9 @@
 package com.robosh.distancebetween.locationservice
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
@@ -11,15 +14,15 @@ import android.os.IBinder
 import android.os.Looper
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LifecycleService
 import com.google.android.gms.location.*
 import com.robosh.distancebetween.MainActivity
 import com.robosh.distancebetween.R
-import com.robosh.distancebetween.database.RealtimeDatabaseImpl
 import com.robosh.distancebetween.widget.LocationWidgetProvider
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-class ForegroundLocationService : Service() {
+class ForegroundLocationService : LifecycleService() {
 
     private companion object {
         const val NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL_ID"
@@ -79,8 +82,6 @@ class ForegroundLocationService : Service() {
                     currentLocation = locationResult.lastLocation
 
                     // TODO save to DB
-
-//                    RealtimeDatabaseImpl.newInstance().saveLocation(currentLocation)
                     sendWidgetBroadcast(currentLocation)
                     notificationManager.notify(
                         NOTIFICATION_ID,
@@ -94,6 +95,7 @@ class ForegroundLocationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         Timber.d("Service onStartCommand Callback")
         val notification = createNotification(currentLocation)
         startForeground(NOTIFICATION_ID, notification)
@@ -110,6 +112,7 @@ class ForegroundLocationService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder? {
+        super.onBind(intent)
         Timber.d("Service onBind method")
         return null
     }
