@@ -7,7 +7,7 @@ import com.robosh.distancebetween.model.User
 
 interface RealtimeDatabase {
 
-    fun isUserExistsInDatabase(): LiveData<User>
+    fun isUserExistsInDatabase(): LiveData<Resource<User>>
 
     fun saveUser(user: User): LiveData<Resource<User>>
 

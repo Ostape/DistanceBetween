@@ -8,5 +8,5 @@ interface SaveUserRepository {
 
     fun saveUser(user: User): LiveData<Resource<User>>
 
-    fun isUserExists(): LiveData<User>
+    fun isUserAlreadyExists(): LiveData<Resource<User>>
 }

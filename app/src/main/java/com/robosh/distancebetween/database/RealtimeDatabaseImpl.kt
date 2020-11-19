@@ -31,16 +31,17 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     }
 
     override fun saveLocation(locationCoordinates: LocationCoordinates) {
-//        val myLocation =
-//            MyLocation(longitude = location?.longitude ?: 0.0, latitude = location?.latitude ?: 0.0)
         userReference.child(currentUserId).child("location").setValue(locationCoordinates)
     }
 
-    override fun isUserExistsInDatabase(): LiveData<User> {
-        val isUserExists = MutableLiveData<User>()
+    override fun isUserExistsInDatabase(): LiveData<Resource<User>> {
+        val isUserExists = MutableLiveData<Resource<User>>()
+            .apply { postValue(Resource.Loading()) }
+
         val childEventListener = object : ChildEventListener {
 
             override fun onCancelled(error: DatabaseError) {
+                isUserExists.postValue(Resource.Error(error.message))
                 Timber.e(error.message)
             }
 
@@ -53,9 +54,9 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
             }
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val user = snapshot.getValue(User::class.java)
+                val user = snapshot.getValue(User::class.java) ?: return
                 if (snapshot.key.equals(currentUserId)) {
-                    isUserExists.postValue(user)
+                    isUserExists.postValue(Resource.Success(user))
                 }
                 Timber.d("onChildAdded")
             }
