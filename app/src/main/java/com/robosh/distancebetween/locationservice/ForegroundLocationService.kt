@@ -1,9 +1,10 @@
 package com.robosh.distancebetween.locationservice
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.NotificationManager.IMPORTANCE_LOW
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
@@ -18,29 +19,21 @@ import androidx.lifecycle.LifecycleService
 import com.google.android.gms.location.*
 import com.robosh.distancebetween.MainActivity
 import com.robosh.distancebetween.R
+import com.robosh.distancebetween.application.*
 import com.robosh.distancebetween.widget.LocationWidgetProvider
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class ForegroundLocationService : LifecycleService() {
 
-    private companion object {
-        const val NOTIFICATION_CHANNEL_ID = "NOTIFICATION_CHANNEL_ID"
-        const val NOTIFICATION_ID = 110
-    }
-
     private lateinit var notificationManager: NotificationManager
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
-    private var currentLocation: Location? = null
+    private var isFirstRun = true
 
-    // TODO add check if GPS is on/off
     override fun onCreate() {
         super.onCreate()
-        Timber.d("Service onCreate Callback")
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest().apply {
             interval = TimeUnit.SECONDS.toMillis(60)
@@ -54,14 +47,9 @@ class ForegroundLocationService : LifecycleService() {
                 super.onLocationResult(locationResult)
 
                 if (locationResult?.lastLocation != null) {
-                    currentLocation = locationResult.lastLocation
 
                     // TODO save to DB
-                    sendWidgetBroadcast(currentLocation)
-                    notificationManager.notify(
-                        NOTIFICATION_ID,
-                        createNotification(currentLocation)
-                    )
+//                    sendWidgetBroadcast(currentLocation)
                 } else {
                     Timber.d("Location information isn't available.")
                 }
@@ -71,9 +59,21 @@ class ForegroundLocationService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Timber.d("Service onStartCommand Callback")
-        val notification = createNotification(currentLocation)
-        startForeground(NOTIFICATION_ID, notification)
+        intent?.let {
+            when (it.action) {
+                ACTION_START_OR_RESUME_SERVICE -> {
+                    if (isFirstRun) {
+                        startForegroundService()
+                        isFirstRun = false
+                    }
+                }
+                ACTION_STOP_SERVICE -> {
+                    stopForeground(true)
+                    stopSelf()
+                }
+            }
+        }
+
         try {
             fusedLocationProviderClient.requestLocationUpdates(
                 locationRequest,
@@ -97,7 +97,6 @@ class ForegroundLocationService : LifecycleService() {
         removeTask.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Timber.d("Location Callback removed.")
-                stopSelf()
             } else {
                 Timber.d("Failed to remove Location Callback.")
             }
@@ -105,44 +104,62 @@ class ForegroundLocationService : LifecycleService() {
         super.onDestroy()
     }
 
-    private fun createNotification(location: Location?): Notification {
-        Timber.d("Creating Notification")
+    private fun startForegroundService() {
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val titleText = "Title notification"
-        val mainNotificationText = "Notification message ${location?.latitude}"
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID, titleText, NotificationManager.IMPORTANCE_DEFAULT
-            )
-            notificationManager.createNotificationChannel(notificationChannel)
-        }
+        val mainNotificationText = "Notification message"
+        createNotificationChannel(titleText)
 
         val bigTextStyle = NotificationCompat.BigTextStyle()
             .bigText(mainNotificationText)
             .setBigContentTitle(titleText)
 
-        val launchActivityIntent = Intent(this, MainActivity::class.java)
+        val notificationBuilder =
+            getNotificationBuilder(bigTextStyle, titleText, mainNotificationText)
 
-        val activityPendingIntent = PendingIntent.getActivity(
-            this, 0, launchActivityIntent, 0
-        )
+        startForeground(NOTIFICATION_ID, notificationBuilder.build())
+    }
 
-        val notificationCompatBuilder =
-            NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-
-        return notificationCompatBuilder
+    private fun getNotificationBuilder(
+        bigTextStyle: NotificationCompat.BigTextStyle?,
+        titleText: String,
+        mainNotificationText: String
+    ): NotificationCompat.Builder {
+        return NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
             .setStyle(bigTextStyle)
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOngoing(true)
+            .setAutoCancel(false)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .addAction(
-                R.drawable.ic_launcher_foreground, "Launch Activity",
-                activityPendingIntent
+                R.drawable.ic_launcher_foreground,
+                "Launch Activity",
+                getMainActivityPendingIntent()
             )
-            .build()
+    }
+
+    private fun createNotificationChannel(titleText: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                titleText,
+                IMPORTANCE_LOW
+            )
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+    }
+
+    private fun getMainActivityPendingIntent(): PendingIntent {
+        return PendingIntent.getActivity(
+            this,
+            0,
+            Intent(this, MainActivity::class.java).also
+            { it.action = ACTION_SHOW_DISTANCE_BETWEEN_FRAGMENT },
+            FLAG_UPDATE_CURRENT
+        )
     }
 
     private fun sendWidgetBroadcast(location: Location?) {

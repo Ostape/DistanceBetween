@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.robosh.distancebetween.R
+import com.robosh.distancebetween.application.ACCESS_FINE_LOCATION_PERMISSION_CODE
 import com.robosh.distancebetween.application.INTENT_USERNAME
 import com.robosh.distancebetween.databinding.FragmentHomeScreenBinding
 import com.robosh.distancebetween.homescreen.viewmodel.HomeScreenViewModel
@@ -28,12 +29,7 @@ import timber.log.Timber
 
 class HomeScreenFragment : Fragment() {
 
-    private companion object {
-        const val ACCESS_FINE_LOCATION_PERMISSION_CODE = 20
-    }
-
     private lateinit var binding: FragmentHomeScreenBinding
-
     private lateinit var viewModel: HomeScreenViewModel
 
     override fun onCreateView(
@@ -139,6 +135,13 @@ class HomeScreenFragment : Fragment() {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 ACCESS_FINE_LOCATION_PERMISSION_CODE
             )
+        }
+    }
+
+    private fun sendCommandService(action: String) {
+        Intent(requireContext(), ForegroundLocationService::class.java).also {
+            it.action = action
+            requireContext().startService(it)
         }
     }
 

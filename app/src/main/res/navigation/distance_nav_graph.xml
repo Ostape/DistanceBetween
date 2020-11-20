@@ -4,6 +4,11 @@
     android:id="@+id/distance_nav_graph"
     app:startDestination="@id/saveUserFragment">
 
+    <action
+        android:id="@+id/action_global_distance_between_fragment"
+        app:destination="@id/locationDistanceFragment"
+        app:launchSingleTop="true" />
+
     <fragment
         android:id="@+id/homeScreenFragment"
         android:name="com.robosh.distancebetween.homescreen.view.HomeScreenFragment"
