@@ -32,5 +32,5 @@ interface RealtimeDatabase {
 
     fun getCurrentUser(): LiveData<User>
 
-    fun getConnectedUser(connectedUserId: String): LiveData<User>
+    fun listenUserChanges(): LiveData<List<User>>
 }

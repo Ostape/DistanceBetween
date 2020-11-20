@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.robosh.distancebetween.R
+import com.robosh.distancebetween.application.INTENT_USER_FROM_WAIT_FRIEND
 import com.robosh.distancebetween.databinding.FragmentWaitForFriendBinding
 import com.robosh.distancebetween.model.User
 import com.robosh.distancebetween.waitfriend.viewmodel.WaitForFriendViewModel
@@ -23,11 +24,16 @@ class WaitForFriendFragment : Fragment(), AcceptConnectionDialog.OnAcceptConnect
     private lateinit var binding: FragmentWaitForFriendBinding
     private lateinit var viewModel: WaitForFriendViewModel
 
+    var cachedUser: User? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(WaitForFriendViewModel::class.java)
         viewModel.makeCurrentUserAvailableForSharing().observe(this, Observer {
             showAcceptConnectionDialog(it)
+        })
+        viewModel.getCurrentUser().observe(this, Observer {
+            cachedUser = it
         })
     }
 
@@ -53,7 +59,13 @@ class WaitForFriendFragment : Fragment(), AcceptConnectionDialog.OnAcceptConnect
     override fun onAcceptButtonClicked() {
         Timber.d("onAcceptButtonClicked")
         viewModel.acceptConnection()
-        findNavController().navigate(R.id.action_waitForFriendFragment_to_locationDistanceFragment)
+        val bundle = Bundle().apply {
+            putParcelable(INTENT_USER_FROM_WAIT_FRIEND, cachedUser)
+        }
+        findNavController().navigate(
+            R.id.action_waitForFriendFragment_to_locationDistanceFragment,
+            bundle
+        )
     }
 
     override fun onRejectButtonClicked() {

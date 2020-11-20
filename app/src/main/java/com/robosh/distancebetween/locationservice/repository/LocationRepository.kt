@@ -1,15 +1,15 @@
 package com.robosh.distancebetween.locationservice.repository
 
+import android.location.Location
 import androidx.lifecycle.LiveData
-import com.robosh.distancebetween.model.LocationCoordinates
 import com.robosh.distancebetween.model.Resource
 import com.robosh.distancebetween.model.User
 
 interface LocationRepository {
 
-    fun saveUserLocation(location: LocationCoordinates): LiveData<Resource<User>>
+    fun getDistanceBetweenUsers():LiveData<Double>
 
-    fun listenConnectedUserChanges(connectedFriendId: String): LiveData<Resource<User>>
+    fun saveUserLocation(location: Location)
 
-    fun listenCurrentUserChanges(): LiveData<Resource<User>>
+    fun listenUsersChanges(): LiveData<List<User>>
 }

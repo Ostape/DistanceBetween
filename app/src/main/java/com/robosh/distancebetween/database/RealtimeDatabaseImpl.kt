@@ -206,8 +206,37 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         return getUserByIdListen(currentUserId)
     }
 
-    override fun getConnectedUser(connectedUserId: String): LiveData<User> {
-        return getUserByIdListen(connectedUserId)
+    override fun listenUserChanges(): LiveData<List<User>> {
+        val connectedUsers = MutableLiveData<List<User>>()
+            .apply { value = mutableListOf() }
+
+//        connectedUsers.postValue()
+        val childEventListener = object : ChildEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e(error.message)
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                Timber.d("onChildMoved")
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                Timber.d("onChildChanged")
+            }
+
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val user = snapshot.getValue(User::class.java) ?: return
+                if (snapshot.key.equals(currentUserId)) {
+                }
+                Timber.d("onChildAdded")
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                Timber.d("onChildRemoved")
+            }
+        }
+
+        return connectedUsers
     }
 
     private fun getUserByIdListen(id: String): LiveData<User> {

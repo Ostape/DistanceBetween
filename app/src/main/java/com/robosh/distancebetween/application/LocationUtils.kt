@@ -7,8 +7,13 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 const val EARTH_R = 6371
+const val DEFAULT_VALUE = 0.0
 
-fun getDistanceFromLatLonInKm(location1: LocationCoordinates, location2: LocationCoordinates): Double {
+fun getDistanceFromLatLonInKm(
+    location1: LocationCoordinates?,
+    location2: LocationCoordinates?
+): Double {
+    if (location1 == null || location2 == null) return DEFAULT_VALUE
     val dLat =
         degreeToRadian(location2.latitude - location1.latitude)
     val dLon =
@@ -25,7 +30,7 @@ fun getDistanceFromLatLonInKm(location1: LocationCoordinates, location2: Locatio
             )
         ) *
                 sin(dLon / 2) * sin(dLon / 2)
-    val c = 2 * atan2(sqrt(a), sqrt(1-a))
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
     val d = EARTH_R * c
     return d
 }

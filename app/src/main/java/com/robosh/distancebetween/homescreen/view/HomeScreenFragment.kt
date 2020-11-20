@@ -20,6 +20,8 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.robosh.distancebetween.R
 import com.robosh.distancebetween.application.ACCESS_FINE_LOCATION_PERMISSION_CODE
+import com.robosh.distancebetween.application.ACTION_START_OR_RESUME_SERVICE
+import com.robosh.distancebetween.application.ACTION_STOP_SERVICE
 import com.robosh.distancebetween.application.INTENT_USERNAME
 import com.robosh.distancebetween.databinding.FragmentHomeScreenBinding
 import com.robosh.distancebetween.homescreen.viewmodel.HomeScreenViewModel
@@ -48,10 +50,12 @@ class HomeScreenFragment : Fragment() {
         binding.usernameTextView.text = username
         binding.connectToFriendButton.setOnClickListener {
             checkForAccessLocationPermission()
+//            sendCommandService(ACTION_START_OR_RESUME_SERVICE)
             findNavController().navigate(R.id.action_homeScreenFragment_to_connectToFriendFragment)
         }
         binding.waitForConnectionButton.setOnClickListener {
             checkForAccessLocationPermission()
+//            sendCommandService(ACTION_STOP_SERVICE)
             findNavController().navigate(R.id.action_homeScreenFragment_to_waitForFriendFragment)
         }
     }

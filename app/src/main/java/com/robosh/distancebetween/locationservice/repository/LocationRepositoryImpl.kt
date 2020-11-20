@@ -1,24 +1,43 @@
 package com.robosh.distancebetween.locationservice.repository
 
+import android.location.Location
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import com.robosh.distancebetween.application.getDistanceFromLatLonInKm
 import com.robosh.distancebetween.database.RealtimeDatabase
 import com.robosh.distancebetween.model.LocationCoordinates
-import com.robosh.distancebetween.model.Resource
 import com.robosh.distancebetween.model.User
 
 class LocationRepositoryImpl(
     private val realtimeDatabase: RealtimeDatabase
-) : LocationRepository{
+) : LocationRepository {
 
-    override fun saveUserLocation(location: LocationCoordinates): LiveData<Resource<User>> {
-        TODO("Not yet implemented")
+    private val distance = MediatorLiveData<Double>()
+
+    init {
+        distance.addSource(listenUsersChanges()) { result ->
+            result?.let { users ->
+                // todo refactor
+                if (users.size > 1) {
+                    distance.value = getDistanceFromLatLonInKm(
+                        users[0].locationCoordinates,
+                        users[1].locationCoordinates
+                    )
+                }
+            }
+        }
     }
 
-    override fun listenConnectedUserChanges(connectedFriendId: String): LiveData<Resource<User>> {
-        TODO("Not yet implemented")
+    override fun getDistanceBetweenUsers(): LiveData<Double> {
+        return distance
     }
 
-    override fun listenCurrentUserChanges(): LiveData<Resource<User>> {
-        TODO("Not yet implemented")
+    override fun saveUserLocation(location: Location) {
+        val locationCoordinates = LocationCoordinates(location.latitude, location.longitude)
+        realtimeDatabase.saveLocation(locationCoordinates)
+    }
+
+    override fun listenUsersChanges(): LiveData<List<User>> {
+        return realtimeDatabase.listenUserChanges()
     }
 }

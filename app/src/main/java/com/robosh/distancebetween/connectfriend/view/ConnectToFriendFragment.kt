@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.robosh.distancebetween.R
+import com.robosh.distancebetween.application.INTENT_USER_FROM_CONNECT_TO_FRIEND
 import com.robosh.distancebetween.connectfriend.viewmodel.ConnectToFriendViewModel
 import com.robosh.distancebetween.databinding.FragmentConnectToFriendBinding
 import timber.log.Timber
@@ -37,7 +38,13 @@ class ConnectToFriendFragment : Fragment(), ConnectFriendButtonCallback {
         initRecyclerView()
         viewModel.getCurrentUser().observe(viewLifecycleOwner, Observer {
             if (it.connectedFriendId.isNotEmpty()) {
-                findNavController().navigate(R.id.action_connectToFriendFragment_to_locationDistanceFragment)
+                val bundle = Bundle().apply {
+                    putParcelable(INTENT_USER_FROM_CONNECT_TO_FRIEND, it)
+                }
+                findNavController().navigate(
+                    R.id.action_connectToFriendFragment_to_locationDistanceFragment,
+                    bundle
+                )
             }
         })
     }

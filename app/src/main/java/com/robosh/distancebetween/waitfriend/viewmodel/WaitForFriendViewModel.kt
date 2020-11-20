@@ -14,6 +14,10 @@ class WaitForFriendViewModel : ViewModel() {
     private val requestedUser: MutableLiveData<User> = MutableLiveData()
     private val currentUser: MutableLiveData<User> = MutableLiveData()
 
+    fun getCurrentUser(): LiveData<User> {
+        return currentUser
+    }
+
     fun makeCurrentUserAvailableForSharing(): LiveData<User> {
         return Transformations.switchMap(waitForFriendRepository.makeCurrentUserAvailableForSharing()) {
             currentUser.postValue(it)
