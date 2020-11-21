@@ -13,6 +13,7 @@ import timber.log.Timber
 class AcceptConnectionDialog : AppCompatDialogFragment() {
 
     internal interface OnAcceptConnectionDialogListener {
+
         fun onAcceptButtonClicked()
 
         fun onRejectButtonClicked()
@@ -23,9 +24,9 @@ class AcceptConnectionDialog : AppCompatDialogFragment() {
 
     companion object {
         fun newInstance(username: String): AppCompatDialogFragment {
-            val arg = Bundle()
-            arg.putString(INTENT_ACCEPT_DIALOG_USERNAME, username)
-            return AcceptConnectionDialog().apply { arguments = arg }
+            return AcceptConnectionDialog().apply {
+                arguments = Bundle().apply { putString(INTENT_ACCEPT_DIALOG_USERNAME, username) }
+            }
         }
     }
 
@@ -42,7 +43,6 @@ class AcceptConnectionDialog : AppCompatDialogFragment() {
         }
     }
 
-    // todo extract to strings
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireContext())
         val view = requireActivity().layoutInflater.inflate(R.layout.dialog_accept_connection, null)
@@ -50,12 +50,12 @@ class AcceptConnectionDialog : AppCompatDialogFragment() {
         val negativeListener = createOnNegativeClickListener()
 
         builder.setView(view)
-            .setTitle("Title")
-            .setNegativeButton("Reject", negativeListener)
-            .setPositiveButton("Accept", positiveListener)
+            .setTitle(getString(R.string.connection_user_request))
+            .setNegativeButton(getString(R.string.reject_connection), negativeListener)
+            .setPositiveButton(getString(R.string.accept_connection), positiveListener)
 
         view.findViewById<TextView>(R.id.usernameDialogTextView).text =
-            "$username wants to share location with you!"
+            getString(R.string.connection_request_message, username)
         return builder.create()
     }
 

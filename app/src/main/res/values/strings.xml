@@ -16,4 +16,8 @@
     <string name="my_friends_coordinates_longitude_latitude">My Friends Coordinates: Longitude Latitude</string>
     <string name="distance_between_users">Distance between users:</string>
     <string name="just_waiting_for_friend">Just waiting for friend :)</string>
+    <string name="connection_user_request">Connection user request</string>
+    <string name="reject_connection">Reject</string>
+    <string name="accept_connection">Accept</string>
+    <string name="connection_request_message">%s wants to share location with you!</string>
 </resources>
