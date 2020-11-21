@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="@dimen/standard_margin">
 
     <TextView
         android:id="@+id/usernameTextView"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
+        android:layout_marginTop="@dimen/standard_margin"
         android:textAlignment="center"
-        tools:text="Username"/>
+        android:textSize="@dimen/xxtext_size"
+        tools:text="Username" />
 
     <Button
         android:id="@+id/connectToFriendButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Connect to Friend"/>
+        android:layout_marginTop="@dimen/standard_margin"
+        android:text="@string/connect_to_friend" />
 
     <Button
         android:id="@+id/waitForConnectionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Wait for Friend"/>
+        android:layout_marginTop="@dimen/standard_margin"
+        android:text="@string/wait_for_friend" />
 
 </LinearLayout>

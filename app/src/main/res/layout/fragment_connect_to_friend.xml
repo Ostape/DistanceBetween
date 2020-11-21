@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="@dimen/standard_margin">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Find friend to share location"
-        android:textSize="20sp"
-        android:textAlignment="center"/>
-
+        android:text="@string/find_friend_to_share_location"
+        android:textAlignment="center"
+        android:textSize="@dimen/xtext_size" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/availableUsersRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/available_user_view_holder"/>
+        tools:listitem="@layout/available_user_view_holder" />
 
 </LinearLayout>

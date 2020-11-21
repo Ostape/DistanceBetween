@@ -8,4 +8,12 @@
     <string name="username_edit_text_hint">Username</string>
     <string name="save_username_text">Save username</string>
     <string name="share_button">Share</string>
+    <string name="find_friend_to_share_location">Find friend to share location</string>
+    <string name="connect_to_friend">Connect to Friend</string>
+    <string name="wait_for_friend">Wait for Friend</string>
+    <string name="location_distance_screen">Location distance screen</string>
+    <string name="my_coordinates_longitude_latitude">My Coordinates: Longitude Latitude</string>
+    <string name="my_friends_coordinates_longitude_latitude">My Friends Coordinates: Longitude Latitude</string>
+    <string name="distance_between_users">Distance between users:</string>
+    <string name="just_waiting_for_friend">Just waiting for friend :)</string>
 </resources>

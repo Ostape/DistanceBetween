@@ -3,12 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="@dimen/standard_margin">
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="@dimen/xxmargin_size">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/saveUsernameEditText"
@@ -22,7 +22,7 @@
         android:id="@+id/saveUserInFirebaseButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="@dimen/xxmargin_size"
         android:text="@string/save_username_text" />
 
     <ProgressBar
@@ -30,9 +30,9 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_gravity="center"
-        android:visibility="gone"
-        android:progressDrawable="@drawable/circular_progress_bar" />
+        android:layout_marginTop="@dimen/standard_margin"
+        android:progressDrawable="@drawable/circular_progress_bar"
+        android:visibility="gone" />
 
 </LinearLayout>

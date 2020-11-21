@@ -7,9 +7,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="Just waiting for friend :)"
+        android:layout_marginTop="@dimen/xmargin_size"
+        android:text="@string/just_waiting_for_friend"
         android:textAlignment="center"
-        android:textSize="25sp" />
+        android:textSize="@dimen/xxtext_size" />
 
 </LinearLayout>

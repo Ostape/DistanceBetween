@@ -4,60 +4,69 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="@dimen/standard_margin">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Location distance screen"
+        android:text="@string/location_distance_screen"
         android:textAlignment="center"
-        android:textSize="30sp" />
+        android:textSize="@dimen/xxtext_size" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="My Coordinates: Longitude Latitude"
-        android:textSize="20sp" />
+        android:layout_marginTop="@dimen/xmargin_size"
+        android:text="@string/my_coordinates_longitude_latitude"
+        android:textSize="@dimen/xtext_size" />
 
     <TextView
         android:id="@+id/myLocationCoordinates"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="textEnd"
-        android:textSize="20sp"
+        android:textSize="@dimen/xtext_size"
         tools:text="123123,123123, 123123.12312" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBlack" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="My Friends Coordinates: Longitude Latitude"
-        android:textSize="20sp" />
+        android:layout_marginTop="@dimen/standard_margin"
+        android:text="@string/my_friends_coordinates_longitude_latitude"
+        android:textSize="@dimen/xtext_size" />
 
     <TextView
         android:id="@+id/myFriendsLocationCoordinates"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="textEnd"
-        android:textSize="20sp"
+        android:textSize="@dimen/xtext_size"
         tools:text="123123,123123, 123123.12312" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBlack" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:textSize="30sp"
-        android:text="Distance between users:"/>
+        android:layout_marginTop="@dimen/xmargin_size"
+        android:text="@string/distance_between_users"
+        android:textSize="@dimen/xxtext_size" />
 
     <TextView
         android:id="@+id/distanceBetween"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp"
-        android:text="20km"
-        android:textColor="@color/colorPrimary" />
+        android:layout_marginTop="@dimen/standard_margin"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/xtext_size"
+        tools:text="20km" />
 
 </LinearLayout>

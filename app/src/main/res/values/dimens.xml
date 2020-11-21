@@ -3,4 +3,7 @@
     <dimen name="standard_margin">20dp</dimen>
     <dimen name="icon_size">40dp</dimen>
     <dimen name="xtext_size">20sp</dimen>
+    <dimen name="xxtext_size">30sp</dimen>
+    <dimen name="xmargin_size">40dp</dimen>
+    <dimen name="xxmargin_size">50dp</dimen>
 </resources>
