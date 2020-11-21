@@ -19,17 +19,6 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         userReference = rootNode.getReference("Users")
     }
 
-    companion object {
-        private var realtimeDatabase: RealtimeDatabase? = null
-
-        // todo create singleton or use Koin
-        fun newInstance(): RealtimeDatabase {
-            return realtimeDatabase ?: RealtimeDatabaseImpl().also {
-                realtimeDatabase = it
-            }
-        }
-    }
-
     override fun saveLocation(locationCoordinates: LocationCoordinates) {
         userReference.child(currentUserId).child("location").setValue(locationCoordinates)
     }
@@ -218,7 +207,7 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                val user =  snapshot.getValue(User::class.java) ?:return
+                val user = snapshot.getValue(User::class.java) ?: return
                 Timber.d("CURRENT TAGGER USER " + user.toString())
                 userList.add(0, user)
                 connectedUsers.postValue(userList)
