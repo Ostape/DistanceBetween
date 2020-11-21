@@ -8,10 +8,7 @@ import org.koin.dsl.module
 
 val saveUserModule = module {
 
-    // ViewModel instance of MyViewModel
-    // get() will resolve Repository instance
     viewModel { SaveUserViewModel(get()) }
 
-    // Single instance of Repository
     single<SaveUserRepository> { SaveUserRepositoryImpl(get()) }
 }

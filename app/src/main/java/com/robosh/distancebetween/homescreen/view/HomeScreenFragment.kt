@@ -16,15 +16,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.robosh.distancebetween.R
 import com.robosh.distancebetween.application.ACCESS_FINE_LOCATION_PERMISSION_CODE
-import com.robosh.distancebetween.application.ACTION_START_OR_RESUME_SERVICE
-import com.robosh.distancebetween.application.ACTION_STOP_SERVICE
 import com.robosh.distancebetween.application.INTENT_USERNAME
 import com.robosh.distancebetween.databinding.FragmentHomeScreenBinding
-import com.robosh.distancebetween.homescreen.viewmodel.HomeScreenViewModel
 import com.robosh.distancebetween.locationservice.ForegroundLocationService
 import timber.log.Timber
 
@@ -32,14 +28,12 @@ import timber.log.Timber
 class HomeScreenFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeScreenBinding
-    private lateinit var viewModel: HomeScreenViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProviders.of(this).get(HomeScreenViewModel::class.java)
         binding = FragmentHomeScreenBinding.inflate(inflater, container, false)
         return binding.root
     }
