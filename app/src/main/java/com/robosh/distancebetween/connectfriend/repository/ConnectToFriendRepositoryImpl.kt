@@ -2,12 +2,11 @@ package com.robosh.distancebetween.connectfriend.repository
 
 import androidx.lifecycle.LiveData
 import com.robosh.distancebetween.database.RealtimeDatabase
-import com.robosh.distancebetween.database.RealtimeDatabaseImpl
 import com.robosh.distancebetween.model.User
 
-class ConnectToFriendRepositoryImpl : ConnectToFriendRepository {
-
-    private val realtimeDatabase: RealtimeDatabase = RealtimeDatabaseImpl.newInstance()
+class ConnectToFriendRepositoryImpl(
+    private val realtimeDatabase: RealtimeDatabase
+) : ConnectToFriendRepository {
 
     override fun getAllAvailableUsers(): LiveData<List<User>> {
         return realtimeDatabase.getAvailableUsers()
