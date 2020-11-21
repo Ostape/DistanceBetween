@@ -49,7 +49,7 @@ class SaveUserFragment : Fragment() {
         })
 
         binding.saveUserInFirebaseButton.setOnClickListener {
-            saveUserListener()
+            listenResultSaveUser()
         }
     }
 
@@ -74,7 +74,7 @@ class SaveUserFragment : Fragment() {
         )
     }
 
-    private fun saveUserListener() {
+    private fun listenResultSaveUser() {
         saveUserViewModel.saveUser().observe(viewLifecycleOwner, Observer {
             when (it) {
                 is Resource.Error -> {
@@ -83,11 +83,9 @@ class SaveUserFragment : Fragment() {
                 }
                 is Resource.Loading -> {
                     showLoadingSpinner()
-                    Timber.d("Show Loading Spinner")
                 }
                 is Resource.Success -> {
                     hideLoadingSpinner()
-                    Timber.d("Show Success Screen")
                 }
             }
         })
