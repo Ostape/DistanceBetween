@@ -8,9 +8,10 @@ import com.robosh.distancebetween.model.User
 import com.robosh.distancebetween.waitfriend.repository.WaitForFriendRepository
 import com.robosh.distancebetween.waitfriend.repository.WaitForFriendRepositoryImpl
 
-class WaitForFriendViewModel : ViewModel() {
+class WaitForFriendViewModel(
+    private val waitForFriendRepository: WaitForFriendRepository
+) : ViewModel() {
 
-    private val waitForFriendRepository: WaitForFriendRepository = WaitForFriendRepositoryImpl()
     private val requestedUser: MutableLiveData<User> = MutableLiveData()
     private val currentUser: MutableLiveData<User> = MutableLiveData()
 

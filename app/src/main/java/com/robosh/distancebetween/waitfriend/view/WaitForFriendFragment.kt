@@ -6,29 +6,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.robosh.distancebetween.R
+import com.robosh.distancebetween.application.ACCEPT_CONNECTION_DIALOG_TAG
 import com.robosh.distancebetween.application.INTENT_USER_FROM_WAIT_FRIEND
 import com.robosh.distancebetween.databinding.FragmentWaitForFriendBinding
 import com.robosh.distancebetween.model.User
 import com.robosh.distancebetween.waitfriend.viewmodel.WaitForFriendViewModel
-import timber.log.Timber
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class WaitForFriendFragment : Fragment(), AcceptConnectionDialog.OnAcceptConnectionDialogListener {
 
-    private companion object {
-        const val ACCEPT_CONNECTION_DIALOG_TAG = "ACCEPT_CONNECTION_DIALOG_TAG"
-    }
-
     private lateinit var binding: FragmentWaitForFriendBinding
-    private lateinit var viewModel: WaitForFriendViewModel
+    private val viewModel: WaitForFriendViewModel by viewModel()
 
-    var cachedUser: User? = null
+    // todo think about it
+    private var cachedUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(WaitForFriendViewModel::class.java)
         viewModel.makeCurrentUserAvailableForSharing().observe(this, Observer {
             showAcceptConnectionDialog(it)
         })
@@ -57,7 +53,6 @@ class WaitForFriendFragment : Fragment(), AcceptConnectionDialog.OnAcceptConnect
     }
 
     override fun onAcceptButtonClicked() {
-        Timber.d("onAcceptButtonClicked")
         viewModel.acceptConnection()
         val bundle = Bundle().apply {
             putParcelable(INTENT_USER_FROM_WAIT_FRIEND, cachedUser)
@@ -69,7 +64,6 @@ class WaitForFriendFragment : Fragment(), AcceptConnectionDialog.OnAcceptConnect
     }
 
     override fun onRejectButtonClicked() {
-        Timber.d("onRejectButtonClicked")
         viewModel.rejectConnection()
     }
 }

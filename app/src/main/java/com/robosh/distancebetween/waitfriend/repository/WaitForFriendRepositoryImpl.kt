@@ -5,9 +5,9 @@ import com.robosh.distancebetween.database.RealtimeDatabase
 import com.robosh.distancebetween.database.RealtimeDatabaseImpl
 import com.robosh.distancebetween.model.User
 
-class WaitForFriendRepositoryImpl : WaitForFriendRepository {
-
-    private val realtimeDatabase: RealtimeDatabase = RealtimeDatabaseImpl.newInstance()
+class WaitForFriendRepositoryImpl(
+    private val realtimeDatabase: RealtimeDatabase
+) : WaitForFriendRepository {
 
     override fun makeCurrentUserAvailableForSharing(): LiveData<User> {
         return realtimeDatabase.makeUserAvailableForSharing()
