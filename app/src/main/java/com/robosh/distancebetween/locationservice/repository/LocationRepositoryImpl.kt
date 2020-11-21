@@ -15,17 +15,17 @@ class LocationRepositoryImpl(
     private val distance = MediatorLiveData<Double>()
 
     init {
-        distance.addSource(listenUsersChanges()) { result ->
-            result?.let { users ->
-                // todo refactor
-                if (users.size > 1) {
-                    distance.value = getDistanceFromLatLonInKm(
-                        users[0].locationCoordinates,
-                        users[1].locationCoordinates
-                    )
-                }
-            }
-        }
+//        distance.addSource(listenUsersChanges()) { result ->
+//            result?.let { users ->
+//                // todo refactor
+//                if (users.size > 1) {
+//                    distance.value = getDistanceFromLatLonInKm(
+//                        users[0].locationCoordinates,
+//                        users[1].locationCoordinates
+//                    )
+//                }
+//            }
+//        }
     }
 
     override fun getDistanceBetweenUsers(): LiveData<Double> {
@@ -37,7 +37,7 @@ class LocationRepositoryImpl(
         realtimeDatabase.saveLocation(locationCoordinates)
     }
 
-    override fun listenUsersChanges(): LiveData<List<User>> {
-        return realtimeDatabase.listenUserChanges()
+    override fun listenUsersChanges(connectedUserId: String): LiveData<List<User>> {
+        return realtimeDatabase.listenUserChanges(connectedUserId)
     }
 }

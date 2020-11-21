@@ -206,35 +206,35 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         return getUserByIdListen(currentUserId)
     }
 
-    override fun listenUserChanges(): LiveData<List<User>> {
+    override fun listenUserChanges(connectedUserId: String): LiveData<List<User>> {
         val connectedUsers = MutableLiveData<List<User>>()
             .apply { value = mutableListOf() }
 
-//        connectedUsers.postValue()
-        val childEventListener = object : ChildEventListener {
+        val userList = ArrayList<User>()
+
+        userReference.child(connectedUserId).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 Timber.e(error.message)
             }
 
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                Timber.d("onChildMoved")
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val user =  snapshot.getValue(User::class.java) ?:return
+                Timber.d("CURRENT TAGGER USER " + user.toString())
+                userList.add(0, user)
+                connectedUsers.postValue(userList)
+            }
+        })
+
+        userReference.child(currentUserId).addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                Timber.e(error.message)
             }
 
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                Timber.d("onChildChanged")
+            override fun onDataChange(snapshot: DataSnapshot) {
+                userList.add(1, snapshot.getValue(User::class.java)!!)
+                connectedUsers.postValue(userList)
             }
-
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val user = snapshot.getValue(User::class.java) ?: return
-                if (snapshot.key.equals(currentUserId)) {
-                }
-                Timber.d("onChildAdded")
-            }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-                Timber.d("onChildRemoved")
-            }
-        }
+        })
 
         return connectedUsers
     }

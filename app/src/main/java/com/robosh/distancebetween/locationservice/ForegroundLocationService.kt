@@ -49,10 +49,6 @@ class ForegroundLocationService : LifecycleService() {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
-        locationRepository.getDistanceBetweenUsers().observe(this, Observer {
-            sendWidgetBroadcast(it)
-        })
-
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 super.onLocationResult(locationResult)
@@ -68,7 +64,6 @@ class ForegroundLocationService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         cachedUser = intent?.getParcelableExtra(INTENT_USER_FOR_SERVICE)
-        Timber.d("TAGGERR" +cachedUser.toString())
         intent?.let {
             when (it.action) {
                 ACTION_START_OR_RESUME_SERVICE -> {
@@ -83,6 +78,21 @@ class ForegroundLocationService : LifecycleService() {
                 }
             }
         }
+
+        locationRepository.listenUsersChanges(cachedUser!!.connectedFriendId)
+            .observe(this, Observer { users ->
+                Timber.d("TAGGERR USERS " + users.toString())
+                users?.let {
+                    if (it.size > 1) {
+                        sendWidgetBroadcast(
+                            getDistanceFromLatLonInKm(
+                                it[0].location,
+                                it[1].location
+                            )
+                        )
+                    }
+                }
+            })
 
         try {
             fusedLocationProviderClient.requestLocationUpdates(

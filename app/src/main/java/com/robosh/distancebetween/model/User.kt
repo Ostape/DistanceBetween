@@ -10,7 +10,7 @@ import kotlinx.android.parcel.Parcelize
 data class User(
     var username: String = "",
     var isUserAvailable: Boolean = false,
-    var locationCoordinates: LocationCoordinates? = null,
+    var location: LocationCoordinates? = null,
     var connectedFriendId: String = ""
 ) : Parcelable {
 

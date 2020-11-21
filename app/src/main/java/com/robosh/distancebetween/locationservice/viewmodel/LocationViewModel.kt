@@ -11,6 +11,6 @@ class LocationViewModel(
     private val locationRepository: LocationRepository
 ) : ViewModel() {
 
-    private val usersData = locationRepository.listenUsersChanges()
+//    private val usersData = locationRepository.listenUsersChanges()
 
 }
