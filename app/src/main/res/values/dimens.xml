@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="standard_margin">20dp</dimen>
+    <dimen name="icon_size">40dp</dimen>
+    <dimen name="xtext_size">20sp</dimen>
+</resources>

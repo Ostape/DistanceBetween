@@ -7,4 +7,5 @@
     <string name="stop_receiving_location">Stop Receiving Location</string>
     <string name="username_edit_text_hint">Username</string>
     <string name="save_username_text">Save username</string>
+    <string name="share_button">Share</string>
 </resources>
