@@ -12,8 +12,8 @@ import com.robosh.distancebetween.R
 import com.robosh.distancebetween.application.INTENT_USER_FROM_CONNECT_TO_FRIEND
 import com.robosh.distancebetween.connectfriend.viewmodel.ConnectToFriendViewModel
 import com.robosh.distancebetween.databinding.FragmentConnectToFriendBinding
+import com.robosh.distancebetween.model.User
 import org.koin.android.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class ConnectToFriendFragment : Fragment(), ConnectFriendButtonCallback {
 
@@ -35,29 +35,32 @@ class ConnectToFriendFragment : Fragment(), ConnectFriendButtonCallback {
         initRecyclerView()
         viewModel.getCurrentUser().observe(viewLifecycleOwner, Observer {
             if (it.connectedFriendId.isNotEmpty()) {
-                val bundle = Bundle().apply {
-                    putParcelable(INTENT_USER_FROM_CONNECT_TO_FRIEND, it)
-                }
-                findNavController().navigate(
-                    R.id.action_connectToFriendFragment_to_locationDistanceFragment,
-                    bundle
-                )
+                navigateToLocationDistanceFragment(it)
             }
         })
+    }
+
+    override fun onConnectFriend(id: String?) {
+        id?.let {
+            viewModel.pairConnectedUser(id)
+        }
+    }
+
+    private fun navigateToLocationDistanceFragment(it: User) {
+        findNavController().navigate(
+            R.id.action_connectToFriendFragment_to_locationDistanceFragment,
+            Bundle().apply {
+                putParcelable(INTENT_USER_FROM_CONNECT_TO_FRIEND, it)
+            }
+        )
     }
 
     private fun initRecyclerView() {
         binding.availableUsersRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         availableUsersAdapter = AvailableUsersAdapter(this)
-
         viewModel.getAllAvailableUsers().observe(viewLifecycleOwner, Observer {
             availableUsersAdapter.setData(it)
-            Timber.d(it.toString())
         })
         binding.availableUsersRecyclerView.adapter = availableUsersAdapter
-    }
-
-    override fun onConnectFriend(id: String?) {
-        viewModel.pairConnectedUser(id)
     }
 }

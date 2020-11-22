@@ -13,8 +13,8 @@ class ConnectToFriendViewModel(
         return connectToFriendRepository.getAllAvailableUsers()
     }
 
-    fun pairConnectedUser(id: String?) {
-        connectToFriendRepository.setUserAvailabilityAndAddPairedUser(id!!)
+    fun pairConnectedUser(id: String) {
+        connectToFriendRepository.setUserAvailabilityAndAddPairedUser(id)
     }
 
     fun getCurrentUser(): LiveData<User> {
