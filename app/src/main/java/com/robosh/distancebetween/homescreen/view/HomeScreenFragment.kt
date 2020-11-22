@@ -18,16 +18,24 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.robosh.distancebetween.R
 import com.robosh.distancebetween.application.ACCESS_FINE_LOCATION_PERMISSION_CODE
 import com.robosh.distancebetween.application.INTENT_USERNAME
 import com.robosh.distancebetween.databinding.FragmentHomeScreenBinding
-
+import com.robosh.distancebetween.homescreen.viewmodel.HomeScreenViewModel
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class HomeScreenFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeScreenBinding
+    private val homeScreenViewModel: HomeScreenViewModel by viewModel()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        homeScreenViewModel.setIsPermissionGranted(isLocationPermissionGranted())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,9 +51,8 @@ class HomeScreenFragment : Fragment() {
         val username = arguments?.getString(INTENT_USERNAME)
         binding.usernameTextView.text = username
         initNavigationButtons()
-        binding.requestPermissionButton.setOnClickListener {
-            checkForAccessLocationPermission()
-        }
+        initRequestLocationButtonListener()
+        showButtonsIfPermissionsGranted()
     }
 
     override fun onRequestPermissionsResult(
@@ -57,9 +64,7 @@ class HomeScreenFragment : Fragment() {
         if (requestCode == ACCESS_FINE_LOCATION_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED) {
                 showToast("Permission GRANTED")
-                binding.waitForConnectionButton.visibility = VISIBLE
-                binding.connectToFriendButton.visibility = VISIBLE
-                binding.requestPermissionButton.visibility = GONE
+                homeScreenViewModel.setIsPermissionGranted(true)
             } else {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 val uri: Uri = Uri.fromParts("package", activity?.packageName, null)
@@ -120,6 +125,12 @@ class HomeScreenFragment : Fragment() {
         Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
     }
 
+    private fun initRequestLocationButtonListener() {
+        binding.requestPermissionButton.setOnClickListener {
+            checkForAccessLocationPermission()
+        }
+    }
+
     private fun initNavigationButtons() {
         binding.connectToFriendButton.setOnClickListener {
             if (isEnabledGps()) {
@@ -141,5 +152,21 @@ class HomeScreenFragment : Fragment() {
             showToast("Enable GPS!!!")
             false
         }
+    }
+
+    private fun showButtonsIfPermissionsGranted() {
+        homeScreenViewModel.isPermissionGranted.observe(viewLifecycleOwner, Observer { isGranted ->
+            with(binding) {
+                if (isGranted) {
+                    waitForConnectionButton.visibility = VISIBLE
+                    connectToFriendButton.visibility = VISIBLE
+                    requestPermissionButton.visibility = GONE
+                } else {
+                    waitForConnectionButton.visibility = GONE
+                    connectToFriendButton.visibility = GONE
+                    requestPermissionButton.visibility = VISIBLE
+                }
+            }
+        })
     }
 }

@@ -4,6 +4,7 @@ import android.app.Application
 import com.robosh.distancebetween.BuildConfig
 import com.robosh.distancebetween.connectfriend.di.connectToFriendModule
 import com.robosh.distancebetween.database.di.databaseModule
+import com.robosh.distancebetween.homescreen.di.homeScreenModule
 import com.robosh.distancebetween.locationservice.di.locationModule
 import com.robosh.distancebetween.saveuser.di.saveUserModule
 import com.robosh.distancebetween.waitfriend.di.waitFriendModule
@@ -27,7 +28,8 @@ class RoboshApplication : Application() {
                 databaseModule,
                 locationModule,
                 connectToFriendModule,
-                waitFriendModule
+                waitFriendModule,
+                homeScreenModule
             )
         }
     }
