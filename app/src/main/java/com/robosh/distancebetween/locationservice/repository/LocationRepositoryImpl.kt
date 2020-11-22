@@ -12,26 +12,6 @@ class LocationRepositoryImpl(
     private val realtimeDatabase: RealtimeDatabase
 ) : LocationRepository {
 
-    private val distance = MediatorLiveData<Double>()
-
-    init {
-//        distance.addSource(listenUsersChanges()) { result ->
-//            result?.let { users ->
-//                // todo refactor
-//                if (users.size > 1) {
-//                    distance.value = getDistanceFromLatLonInKm(
-//                        users[0].locationCoordinates,
-//                        users[1].locationCoordinates
-//                    )
-//                }
-//            }
-//        }
-    }
-
-    override fun getDistanceBetweenUsers(): LiveData<Double> {
-        return distance
-    }
-
     override fun saveUserLocation(location: Location) {
         val locationCoordinates = LocationCoordinates(location.latitude, location.longitude)
         realtimeDatabase.saveLocation(locationCoordinates)
