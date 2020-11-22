@@ -22,4 +22,10 @@
     <string name="connection_request_message">%s wants to share location with you!</string>
     <string name="distance_between">Distance Between</string>
     <string name="tap_on_button_to_accept_location_permission">Tap on button to accept location permission</string>
+    <string name="permission_granted_message">Permission GRANTED</string>
+    <string name="enable_gps_message">Enable GPS!!!</string>
+    <string name="location_permission_title">Location Permission</string>
+    <string name="location_permission_message">This permission need for sharing location</string>
+    <string name="button_ok_text">Ok</string>
+    <string name="button_cancel_text">Cancel</string>
 </resources>

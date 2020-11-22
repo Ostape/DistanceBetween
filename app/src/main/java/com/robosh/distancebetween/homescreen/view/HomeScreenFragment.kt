@@ -29,6 +29,10 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 class HomeScreenFragment : Fragment() {
 
+    private companion object {
+        const val PACKAGE = "package"
+    }
+
     private lateinit var binding: FragmentHomeScreenBinding
     private val homeScreenViewModel: HomeScreenViewModel by viewModel()
 
@@ -63,22 +67,14 @@ class HomeScreenFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == ACCESS_FINE_LOCATION_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED) {
-                showToast("Permission GRANTED")
+                showToast(getString(R.string.permission_granted_message))
                 homeScreenViewModel.setIsPermissionGranted(true)
             } else {
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                val uri: Uri = Uri.fromParts("package", activity?.packageName, null)
+                val uri: Uri = Uri.fromParts(PACKAGE, activity?.packageName, null)
                 intent.data = uri
                 startActivityForResult(intent, ACCESS_FINE_LOCATION_PERMISSION_CODE)
             }
-        }
-    }
-
-    private fun checkForAccessLocationPermission() {
-        if (isLocationPermissionGranted()) {
-            showToast("You have already have permission")
-        } else {
-            requestAccessLocationPermission()
         }
     }
 
@@ -89,12 +85,12 @@ class HomeScreenFragment : Fragment() {
             )
         ) {
             AlertDialog.Builder(requireContext())
-                .setTitle("Permission needed Title")
-                .setMessage("I need this permission Message")
-                .setPositiveButton("Ok") { _, _ ->
+                .setTitle(getString(R.string.location_permission_title))
+                .setMessage(getString(R.string.location_permission_message))
+                .setPositiveButton(getString(R.string.button_ok_text)) { _, _ ->
                     requestListOfPermissions()
                 }
-                .setNegativeButton("cancel") { dialog, _ ->
+                .setNegativeButton(getString(R.string.button_cancel_text)) { dialog, _ ->
                     dialog.dismiss()
                 }
                 .create()
@@ -127,7 +123,9 @@ class HomeScreenFragment : Fragment() {
 
     private fun initRequestLocationButtonListener() {
         binding.requestPermissionButton.setOnClickListener {
-            checkForAccessLocationPermission()
+            if (isLocationPermissionGranted().not()) {
+                requestAccessLocationPermission()
+            }
         }
     }
 
@@ -149,7 +147,7 @@ class HomeScreenFragment : Fragment() {
         return if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             true
         } else {
-            showToast("Enable GPS!!!")
+            showToast(getString(R.string.enable_gps_message))
             false
         }
     }
