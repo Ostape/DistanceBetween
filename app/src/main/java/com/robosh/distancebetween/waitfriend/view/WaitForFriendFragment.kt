@@ -19,12 +19,11 @@ class WaitForFriendFragment : Fragment(), AcceptConnectionDialog.OnAcceptConnect
 
     private lateinit var binding: FragmentWaitForFriendBinding
     private val viewModel: WaitForFriendViewModel by viewModel()
-
-    // todo think about it
     private var cachedUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // todo rename func
         viewModel.makeCurrentUserAvailableForSharing().observe(this, Observer {
             showAcceptConnectionDialog(it)
         })
@@ -47,23 +46,22 @@ class WaitForFriendFragment : Fragment(), AcceptConnectionDialog.OnAcceptConnect
         viewModel.makeCurrentUserNotAvailableForSharing()
     }
 
-    private fun showAcceptConnectionDialog(user: User) {
-        val dialog = AcceptConnectionDialog.newInstance(user.username)
-        dialog.show(childFragmentManager, ACCEPT_CONNECTION_DIALOG_TAG)
-    }
-
     override fun onAcceptButtonClicked() {
         viewModel.acceptConnection()
-        val bundle = Bundle().apply {
-            putParcelable(INTENT_USER_FROM_WAIT_FRIEND, cachedUser)
-        }
         findNavController().navigate(
             R.id.action_waitForFriendFragment_to_locationDistanceFragment,
-            bundle
+            Bundle().apply {
+                putParcelable(INTENT_USER_FROM_WAIT_FRIEND, cachedUser)
+            }
         )
     }
 
     override fun onRejectButtonClicked() {
         viewModel.rejectConnection()
+    }
+
+    private fun showAcceptConnectionDialog(user: User) {
+        val dialog = AcceptConnectionDialog.newInstance(user.username)
+        dialog.show(childFragmentManager, ACCEPT_CONNECTION_DIALOG_TAG)
     }
 }
