@@ -15,18 +15,35 @@
         android:textSize="@dimen/xxtext_size"
         tools:text="Username" />
 
-    <Button
-        android:id="@+id/connectToFriendButton"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/standard_margin"
-        android:text="@string/connect_to_friend" />
+        android:layout_marginTop="@dimen/standard_margin">
+
+        <Button
+            android:id="@+id/requestPermissionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/tap_on_button_to_accept_location_permission"
+            android:visibility="visible"
+            tools:visibility="gone" />
+
+        <Button
+            android:id="@+id/connectToFriendButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/connect_to_friend"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </FrameLayout>
 
     <Button
         android:id="@+id/waitForConnectionButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/standard_margin"
-        android:text="@string/wait_for_friend" />
+        android:text="@string/wait_for_friend"
+        android:visibility="gone" />
 
 </LinearLayout>
