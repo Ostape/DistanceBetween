@@ -29,6 +29,12 @@ import java.util.concurrent.TimeUnit
 
 class ForegroundLocationService : LifecycleService() {
 
+    private companion object {
+        const val LOCATION_REQUEST_INTERVAL_SEC = 60L
+        const val LOCATION_REQUEST_FASTEST_INTERVAL_SEC = 10L
+        const val LOCATION_REQUEST_MAX_WAIT_TIME_MIN = 1L
+    }
+
     private val locationRepository: LocationRepository by inject()
 
     private lateinit var notificationManager: NotificationManager
@@ -42,9 +48,9 @@ class ForegroundLocationService : LifecycleService() {
         super.onCreate()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest().apply {
-            interval = TimeUnit.SECONDS.toMillis(60)
-            fastestInterval = TimeUnit.SECONDS.toMillis(10)
-            maxWaitTime = TimeUnit.MINUTES.toMillis(1)
+            interval = TimeUnit.SECONDS.toMillis(LOCATION_REQUEST_INTERVAL_SEC)
+            fastestInterval = TimeUnit.SECONDS.toMillis(LOCATION_REQUEST_FASTEST_INTERVAL_SEC)
+            maxWaitTime = TimeUnit.MINUTES.toMillis(LOCATION_REQUEST_MAX_WAIT_TIME_MIN)
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
@@ -62,46 +68,9 @@ class ForegroundLocationService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        cachedUser = intent?.getParcelableExtra(INTENT_USER_FOR_SERVICE)
-        intent?.let {
-            when (it.action) {
-                ACTION_START_OR_RESUME_SERVICE -> {
-                    if (isFirstRun) {
-                        startForegroundService()
-                        isFirstRun = false
-                    }
-                }
-                ACTION_STOP_SERVICE -> {
-                    stopForeground(true)
-                    stopSelf()
-                }
-            }
-        }
-
-        locationRepository.listenUsersChanges(cachedUser!!.connectedFriendId)
-            .observe(this, Observer { users ->
-                Timber.d("TAGGERR USERS " + users.toString())
-                users?.let {
-                    if (it.size > 1) {
-                        sendWidgetBroadcast(
-                            getDistanceFromLatLonInKm(
-                                it[0].location,
-                                it[1].location
-                            )
-                        )
-                    }
-                }
-            })
-
-        try {
-            fusedLocationProviderClient.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                Looper.myLooper()
-            )
-        } catch (exception: SecurityException) {
-            Timber.e("Lost location permissions. Couldn't remove updates. $exception")
-        }
+        onStartServiceWithActionFlag(intent)
+        observeUsersLocationChanges()
+        requestLocationUpdates()
         return START_NOT_STICKY
     }
 
@@ -122,6 +91,54 @@ class ForegroundLocationService : LifecycleService() {
             }
         }
         super.onDestroy()
+    }
+
+    private fun requestLocationUpdates() {
+        try {
+            fusedLocationProviderClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.myLooper()
+            )
+        } catch (exception: SecurityException) {
+            Timber.e("Lost location permissions. Couldn't remove updates. $exception")
+        }
+    }
+
+    private fun onStartServiceWithActionFlag(intent: Intent?) {
+        cachedUser = intent?.getParcelableExtra(INTENT_USER_FOR_SERVICE)
+        intent?.let {
+            when (it.action) {
+                ACTION_START_OR_RESUME_SERVICE -> {
+                    if (isFirstRun) {
+                        startForegroundService()
+                        isFirstRun = false
+                    }
+                }
+                ACTION_STOP_SERVICE -> {
+                    stopForeground(true)
+                    stopSelf()
+                }
+            }
+        }
+    }
+
+    private fun observeUsersLocationChanges() {
+        cachedUser?.let { user ->
+            locationRepository.listenUsersChanges(user.connectedFriendId)
+                .observe(this, Observer { users ->
+                    users?.let {
+                        if (it.size > 1) {
+                            sendWidgetBroadcast(
+                                getDistanceFromLatLonInKm(
+                                    it[0].location,
+                                    it[1].location
+                                )
+                            )
+                        }
+                    }
+                })
+        }
     }
 
     private fun startForegroundService() {
@@ -190,7 +207,8 @@ class ForegroundLocationService : LifecycleService() {
         for (widgetId in allWidgetIds) {
             val remoteViews =
                 RemoteViews(this.applicationContext.packageName, R.layout.widget_location)
-            remoteViews.setTextViewText(R.id.distanceBetweenValue, "${round(distance * 100, 2)} m")
+                                                                            // todo make converter
+            remoteViews.setTextViewText(R.id.distanceBetweenValue, "${round(distance * 1000, 2)} m")
             appWidgetManager.updateAppWidget(widgetId, remoteViews)
         }
     }
