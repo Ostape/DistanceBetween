@@ -1,6 +1,8 @@
 package com.robosh.distancebetween.application
 
 import com.robosh.distancebetween.model.LocationCoordinates
+import java.math.BigDecimal
+import java.math.RoundingMode
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -37,4 +39,11 @@ fun getDistanceFromLatLonInKm(
 
 private fun degreeToRadian(deg: Double): Double {
     return deg * (Math.PI / 180)
+}
+
+fun round(value: Double, places: Int): Double {
+    require(places >= 0)
+    var bd: BigDecimal = BigDecimal.valueOf(value)
+    bd = bd.setScale(places, RoundingMode.HALF_UP)
+    return bd.toDouble()
 }

@@ -190,7 +190,7 @@ class ForegroundLocationService : LifecycleService() {
         for (widgetId in allWidgetIds) {
             val remoteViews =
                 RemoteViews(this.applicationContext.packageName, R.layout.widget_location)
-            remoteViews.setTextViewText(R.id.distanceBetweenValue, "Random: $distance")
+            remoteViews.setTextViewText(R.id.distanceBetweenValue, "${round(distance * 100, 2)} m")
             appWidgetManager.updateAppWidget(widgetId, remoteViews)
         }
     }
