@@ -6,4 +6,6 @@
     <dimen name="xxtext_size">30sp</dimen>
     <dimen name="xmargin_size">40dp</dimen>
     <dimen name="xxmargin_size">50dp</dimen>
+    <dimen name="small_margin">10dp</dimen>
+    <dimen name="widget_icon_size">80dp</dimen>
 </resources>

@@ -20,4 +20,5 @@
     <string name="reject_connection">Reject</string>
     <string name="accept_connection">Accept</string>
     <string name="connection_request_message">%s wants to share location with you!</string>
+    <string name="distance_between">Distance Between</string>
 </resources>

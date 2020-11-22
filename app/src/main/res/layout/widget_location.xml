@@ -1,14 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widgetLayoutId"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/layout_border"
+    android:padding="@dimen/small_margin">
 
-    <!--    TODO rework layout-->
-    <Button
-        android:id="@+id/exampleWidgetButton"
+    <ImageView
+        android:id="@+id/imagePeople"
+        android:layout_width="@dimen/widget_icon_size"
+        android:layout_height="@dimen/widget_icon_size"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/ic_keep_distance" />
+
+    <TextView
+        android:id="@+id/distanceBetweenText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Getting Location" />
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="@dimen/small_margin"
+        android:layout_toEndOf="@+id/imagePeople"
+        android:text="@string/distance_between"
+        android:textSize="@dimen/xtext_size" />
+
+    <TextView
+        android:id="@+id/distanceBetweenValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/distanceBetweenText"
+        android:layout_marginStart="@dimen/small_margin"
+        android:layout_marginTop="@dimen/small_margin"
+        android:layout_toEndOf="@+id/imagePeople"
+        android:textSize="@dimen/xtext_size"
+        tools:text="12341 m" />
 
 </RelativeLayout>

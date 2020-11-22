@@ -16,7 +16,6 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ServiceLifecycleDispatcher
 import com.google.android.gms.location.*
 import com.robosh.distancebetween.MainActivity
 import com.robosh.distancebetween.R
@@ -191,7 +190,7 @@ class ForegroundLocationService : LifecycleService() {
         for (widgetId in allWidgetIds) {
             val remoteViews =
                 RemoteViews(this.applicationContext.packageName, R.layout.widget_location)
-            remoteViews.setTextViewText(R.id.exampleWidgetButton, "Random: $distance")
+            remoteViews.setTextViewText(R.id.distanceBetweenValue, "Random: $distance")
             appWidgetManager.updateAppWidget(widgetId, remoteViews)
         }
     }

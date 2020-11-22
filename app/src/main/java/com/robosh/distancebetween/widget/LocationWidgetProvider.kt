@@ -21,7 +21,7 @@ class LocationWidgetProvider : AppWidgetProvider() {
             val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
             val remoteViews = RemoteViews(context.packageName, R.layout.widget_location)
-            remoteViews.setOnClickPendingIntent(R.id.exampleWidgetButton, pendingIntent)
+            remoteViews.setOnClickPendingIntent(R.id.widgetLayoutId, pendingIntent)
 
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
         }
