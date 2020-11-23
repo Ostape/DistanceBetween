@@ -130,6 +130,8 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     override fun makeUserAvailableForSharing(): LiveData<User> {
         val userLiveData = MutableLiveData<User>()
         userReference.child(currentUserId).child("userAvailable").setValue(true)
+
+        // todo add init block with onDisconnect action
         userReference.child(currentUserId).child("userAvailable").onDisconnect().setValue(false)
         userReference.child(currentUserId).child("connectedFriendId").onDisconnect().setValue("")
 

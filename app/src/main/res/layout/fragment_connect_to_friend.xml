@@ -13,10 +13,24 @@
         android:textAlignment="center"
         android:textSize="@dimen/xtext_size" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/availableUsersRecyclerView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/available_user_view_holder" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/availableUsersRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/available_user_view_holder" />
+
+        <ProgressBar
+            android:id="@+id/connectToFriendProgressBar"
+            android:layout_width="@dimen/progress_bar_size"
+            android:layout_height="@dimen/progress_bar_size"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </FrameLayout>
 
 </LinearLayout>
