@@ -125,6 +125,9 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     override fun makeUserAvailableForSharing(): LiveData<User> {
         val userLiveData = MutableLiveData<User>()
         userReference.child(currentUserId).child("userAvailable").setValue(true)
+        userReference.child(currentUserId).child("userAvailable").onDisconnect().setValue(false)
+        userReference.child(currentUserId).child("connectedFriendId").onDisconnect().setValue("")
+
         userReference.child(currentUserId).addValueEventListener(object : ValueEventListener {
 
             override fun onCancelled(error: DatabaseError) {
