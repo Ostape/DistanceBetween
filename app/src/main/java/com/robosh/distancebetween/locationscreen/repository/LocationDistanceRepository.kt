@@ -6,4 +6,6 @@ import com.robosh.distancebetween.model.User
 interface LocationDistanceRepository {
 
     fun listenUsersChanges(connectedUserId: String): LiveData<List<User>>
+
+    fun stopSharingLocation(cachedUser: User?)
 }

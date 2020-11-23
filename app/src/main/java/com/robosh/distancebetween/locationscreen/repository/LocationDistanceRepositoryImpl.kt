@@ -11,4 +11,8 @@ class LocationDistanceRepositoryImpl(
     override fun listenUsersChanges(connectedUserId: String): LiveData<List<User>> {
         return realtimeDatabase.listenUserChanges(connectedUserId)
     }
+
+    override fun stopSharingLocation(cachedUser: User?) {
+        realtimeDatabase.stopSharingLocation(cachedUser)
+    }
 }

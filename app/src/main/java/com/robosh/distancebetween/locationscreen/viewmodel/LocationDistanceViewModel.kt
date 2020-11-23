@@ -12,4 +12,8 @@ class LocationDistanceViewModel(
     fun listenUsersChanges(connectedUserId: String): LiveData<List<User>> {
         return locationDistanceRepository.listenUsersChanges(connectedUserId)
     }
+
+    fun stopShareLocation(cachedUser: User?) {
+        locationDistanceRepository.stopSharingLocation(cachedUser)
+    }
 }

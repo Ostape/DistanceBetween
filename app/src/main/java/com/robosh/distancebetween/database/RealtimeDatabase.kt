@@ -33,4 +33,6 @@ interface RealtimeDatabase {
     fun getCurrentUser(): LiveData<User>
 
     fun listenUserChanges(connectedUserId: String): LiveData<List<User>>
+
+    fun stopSharingLocation(cachedUser: User?)
 }

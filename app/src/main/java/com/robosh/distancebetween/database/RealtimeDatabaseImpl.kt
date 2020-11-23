@@ -235,6 +235,14 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         return connectedUsers
     }
 
+    override fun stopSharingLocation(cachedUser: User?) {
+        userReference.child(currentUserId).child("connectedFriendId").setValue("")
+        cachedUser?.let {
+            userReference.child(cachedUser.connectedFriendId).child("connectedFriendId")
+                .setValue("")
+        }
+    }
+
     private fun getUserByIdListen(id: String): LiveData<User> {
         val user: MutableLiveData<User> = MutableLiveData()
         userReference.child(id).addValueEventListener(object : ValueEventListener {

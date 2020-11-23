@@ -44,11 +44,19 @@ class LocationDistanceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeLocationChanges()
+        initButtonClickListener()
     }
 
     override fun onDestroy() {
         sendCommandService(ACTION_STOP_SERVICE)
         super.onDestroy()
+    }
+
+    private fun initButtonClickListener() {
+        binding.stopSharingLocationButton.setOnClickListener {
+            locationDistanceViewModel.stopShareLocation(cachedUser)
+            findNavController().popBackStack(R.id.homeScreenFragment, false)
+        }
     }
 
     private fun initBackPressNavigation() {
