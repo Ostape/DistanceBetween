@@ -8,5 +8,5 @@ interface LocationRepository {
 
     fun saveUserLocation(location: Location)
 
-    fun listenUsersChanges(connectedUserId: String): LiveData<List<User>>
+    fun listenUsersChanges(): LiveData<List<User>>
 }

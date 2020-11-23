@@ -20,8 +20,9 @@ import com.google.android.gms.location.*
 import com.robosh.distancebetween.MainActivity
 import com.robosh.distancebetween.R
 import com.robosh.distancebetween.application.*
+import com.robosh.distancebetween.database.RealtimeDatabaseImpl.Companion.CONNECTED_USER_INDEX
+import com.robosh.distancebetween.database.RealtimeDatabaseImpl.Companion.CURRENT_USER_INDEX
 import com.robosh.distancebetween.locationservice.repository.LocationRepository
-import com.robosh.distancebetween.model.User
 import com.robosh.distancebetween.widget.LocationWidgetProvider
 import org.koin.android.ext.android.inject
 import timber.log.Timber
@@ -41,7 +42,6 @@ class ForegroundLocationService : LifecycleService() {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
     private var isFirstRun = true
-    private var cachedUser: User? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -104,7 +104,6 @@ class ForegroundLocationService : LifecycleService() {
     }
 
     private fun onStartServiceWithActionFlag(intent: Intent?) {
-        cachedUser = intent?.getParcelableExtra(INTENT_USER_FOR_SERVICE)
         intent?.let {
             when (it.action) {
                 ACTION_START_OR_RESUME_SERVICE -> {
@@ -122,21 +121,19 @@ class ForegroundLocationService : LifecycleService() {
     }
 
     private fun observeUsersLocationChanges() {
-        cachedUser?.let { user ->
-            locationRepository.listenUsersChanges(user.connectedFriendId)
-                .observe(this, Observer { users ->
-                    users?.let {
-                        if (it.size > 1) {
-                            sendWidgetBroadcast(
-                                getDistanceFromLatLon(
-                                    it[0].location,
-                                    it[1].location
-                                )
-                            )
-                        }
-                    }
-                })
-        }
+        locationRepository.listenUsersChanges().observe(this, Observer { users ->
+            users?.let {
+                if (it.size > 1) {
+                    sendWidgetBroadcast(
+                        getDistanceFromLatLon(
+                            it[CURRENT_USER_INDEX].location,
+                            it[CONNECTED_USER_INDEX].location
+                        )
+                    )
+                }
+            }
+        })
+
     }
 
     private fun startForegroundService() {

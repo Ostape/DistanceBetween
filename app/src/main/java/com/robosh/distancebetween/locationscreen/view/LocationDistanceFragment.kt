@@ -105,7 +105,6 @@ class LocationDistanceFragment : Fragment() {
     private fun sendCommandService(action: String) {
         Intent(requireContext(), ForegroundLocationService::class.java).also {
             it.action = action
-            it.putExtra(INTENT_USER_FOR_SERVICE, cachedUser)
             requireContext().startService(it)
         }
     }
