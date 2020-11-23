@@ -76,12 +76,23 @@ class LocationDistanceFragment : Fragment() {
         cachedUser?.let {
             locationDistanceViewModel.listenUsersChanges(it.connectedFriendId)
                 .observe(viewLifecycleOwner, Observer { users ->
-//                    binding.myFriendsLocationCoordinates.text =
-//                        users[CONNECTED_USER_INDEX].location.toString()
-//                    binding.myLocationCoordinates.text =
-//                        users[CURRENT_USER_INDEX].location.toString()
-
+                    if (users.size > 1) {
+                        setViewData(users)
+                    }
                 })
+        }
+    }
+
+    private fun setViewData(users: List<User>) {
+        val currentUser = users[CURRENT_USER_INDEX]
+        val connectedUser = users[CONNECTED_USER_INDEX]
+        with(binding) {
+            myLocationLatitude.text = currentUser.location?.latitude.toString()
+            myLocationLongitude.text = currentUser.location?.longitude.toString()
+            myFriendsLocationLatitude.text = connectedUser.location?.latitude.toString()
+            myFriendsLocationLongitude.text = connectedUser.location?.longitude.toString()
+            distanceBetween.text =
+                getDistanceFromLatLon(currentUser.location, connectedUser.location)
         }
     }
 
