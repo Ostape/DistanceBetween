@@ -143,4 +143,13 @@
         app:layout_constraintTop_toBottomOf="@id/distanceBetweenUsersTextView"
         tools:text="20km" />
 
+    <Button
+        android:id="@+id/stopSharingLocationButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/xmargin_size"
+        android:text="@string/stop_sharing"
+        app:layout_constraintTop_toBottomOf="@id/distanceBetween" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
