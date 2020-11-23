@@ -36,7 +36,6 @@ class ForegroundLocationService : LifecycleService() {
     }
 
     private val locationRepository: LocationRepository by inject()
-
     private lateinit var notificationManager: NotificationManager
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
@@ -76,7 +75,6 @@ class ForegroundLocationService : LifecycleService() {
 
     override fun onBind(intent: Intent?): IBinder? {
         super.onBind(intent)
-        Timber.d("Service onBind method")
         return null
     }
 

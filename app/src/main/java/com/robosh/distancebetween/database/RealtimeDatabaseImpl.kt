@@ -47,7 +47,6 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
                 if (snapshot.key.equals(currentUserId)) {
                     isUserExists.postValue(Resource.Success(user))
                 }
-                Timber.d("onChildAdded")
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
@@ -85,7 +84,6 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                Timber.d("onChildChanged")
                 val changedUser = snapshot.getValue(User::class.java) ?: return
                 snapshot.key?.let { key ->
                     if (changedUser.isUserAvailable) {
@@ -106,11 +104,9 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
                     }
                 }
                 availableUsersLiveData.postValue(ArrayList(availableUsers.values))
-                Timber.d("onChildAdded")
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                Timber.d("onChildRemoved")
                 availableUsers.remove(snapshot.key)
                 availableUsersLiveData.postValue(ArrayList(availableUsers.values))
             }
@@ -119,11 +115,13 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         return availableUsersLiveData
     }
 
+    // todo rework
     override fun setUserAvailabilityAndAddPairedUser(id: String) {
         userReference.child(id).child("userAvailable").setValue(false)
         userReference.child(id).child("connectedFriendId").setValue(currentUserId)
     }
 
+    // todo rework
     override fun makeUserAvailableForSharing(): LiveData<User> {
         val userLiveData = MutableLiveData<User>()
         userReference.child(currentUserId).child("userAvailable").setValue(true)
@@ -146,11 +144,13 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         return userLiveData
     }
 
+    // todo
     override fun makeUserNotAvailableForSharing() {
         userReference.child(currentUserId).child("userAvailable").setValue(false)
         userReference.child(currentUserId).child("connectedFriendId").setValue("")
     }
 
+    // todo
     override fun getUserById(id: String): LiveData<User> {
         val user = MutableLiveData<User>()
         userReference.addChildEventListener(object : ChildEventListener {
@@ -171,7 +171,6 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
             }
-
         })
         return user
     }
