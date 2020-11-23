@@ -11,6 +11,11 @@ import timber.log.Timber
 
 class RealtimeDatabaseImpl : RealtimeDatabase {
 
+    companion object {
+        const val CURRENT_USER_INDEX = 0
+        const val CONNECTED_USER_INDEX = 1
+    }
+
     private val rootNode: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val userReference: DatabaseReference
     private val currentUserId = FirebaseInstanceId.getInstance().id
@@ -201,8 +206,6 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         val connectedUsers = MutableLiveData<List<User>>()
             .apply { value = mutableListOf() }
         val userArray = arrayOf(User(), User())
-//        val userList = ArrayList<User>()
-//        userArray[0] = User()
         userReference.child(connectedUserId).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 Timber.e(error.message)
@@ -210,19 +213,19 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue(User::class.java) ?: return
-                Timber.d("CURRENT TAGGER USER " + user.toString())
-                userArray[0] = user
+                userArray[CONNECTED_USER_INDEX] = user
                 connectedUsers.postValue(userArray.toList())
             }
         })
 
         userReference.child(currentUserId).addValueEventListener(object : ValueEventListener {
+
             override fun onCancelled(error: DatabaseError) {
                 Timber.e(error.message)
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                userArray[1] = snapshot.getValue(User::class.java)!!
+                userArray[CURRENT_USER_INDEX] = snapshot.getValue(User::class.java)!!
                 connectedUsers.postValue(userArray.toList())
             }
         })

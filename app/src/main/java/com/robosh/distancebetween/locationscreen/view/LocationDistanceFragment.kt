@@ -11,6 +11,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.robosh.distancebetween.R
 import com.robosh.distancebetween.application.*
+import com.robosh.distancebetween.database.RealtimeDatabaseImpl.Companion.CONNECTED_USER_INDEX
+import com.robosh.distancebetween.database.RealtimeDatabaseImpl.Companion.CURRENT_USER_INDEX
 import com.robosh.distancebetween.databinding.FragmentLocationDistanceBinding
 import com.robosh.distancebetween.locationscreen.viewmodel.LocationDistanceViewModel
 import com.robosh.distancebetween.locationservice.ForegroundLocationService
@@ -66,8 +68,10 @@ class LocationDistanceFragment : Fragment() {
             locationDistanceViewModel.listenUsersChanges(it.connectedFriendId)
                 .observe(viewLifecycleOwner, Observer { users ->
                     if (users.size > 1) {
-                        binding.myFriendsLocationCoordinates.text = users[0].location.toString()
-                        binding.myLocationCoordinates.text = users[1].location.toString()
+                        binding.myFriendsLocationCoordinates.text =
+                            users[CONNECTED_USER_INDEX].location.toString()
+                        binding.myLocationCoordinates.text =
+                            users[CURRENT_USER_INDEX].location.toString()
                     }
                 })
         }
