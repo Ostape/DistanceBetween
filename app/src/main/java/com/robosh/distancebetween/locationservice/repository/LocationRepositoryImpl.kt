@@ -14,9 +14,6 @@ class LocationRepositoryImpl(
 
     private val mutableCurrentUser = MutableLiveData<User>()
 
-    private val currentUser: LiveData<User>
-        get() = mutableCurrentUser
-
     override fun saveUserLocation(location: Location) {
         val locationCoordinates = LocationCoordinates(location.latitude, location.longitude)
         realtimeDatabase.saveLocation(locationCoordinates)
@@ -27,5 +24,9 @@ class LocationRepositoryImpl(
             mutableCurrentUser.postValue(it)
             realtimeDatabase.listenUserChanges(it.connectedFriendId)
         }
+    }
+
+    override fun getCurrentUser(): LiveData<User> {
+        return mutableCurrentUser
     }
 }

@@ -69,6 +69,7 @@ class ForegroundLocationService : LifecycleService() {
         super.onStartCommand(intent, flags, startId)
         onStartServiceWithActionFlag(intent)
         observeUsersLocationChanges()
+        observeCurrentUser()
         requestLocationUpdates()
         return START_NOT_STICKY
     }
@@ -89,6 +90,14 @@ class ForegroundLocationService : LifecycleService() {
             }
         }
         super.onDestroy()
+    }
+
+    private fun observeCurrentUser() {
+        locationRepository.getCurrentUser().observe(this, Observer {
+            if (it.connectedFriendId.isEmpty()) {
+                stopSelf()
+            }
+        })
     }
 
     private fun requestLocationUpdates() {

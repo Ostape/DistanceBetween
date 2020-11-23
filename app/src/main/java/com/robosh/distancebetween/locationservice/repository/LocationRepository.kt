@@ -9,4 +9,6 @@ interface LocationRepository {
     fun saveUserLocation(location: Location)
 
     fun listenUsersChanges(): LiveData<List<User>>
+
+    fun getCurrentUser(): LiveData<User>
 }
