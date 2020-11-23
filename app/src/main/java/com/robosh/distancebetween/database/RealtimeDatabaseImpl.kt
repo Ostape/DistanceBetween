@@ -200,9 +200,9 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     override fun listenUserChanges(connectedUserId: String): LiveData<List<User>> {
         val connectedUsers = MutableLiveData<List<User>>()
             .apply { value = mutableListOf() }
-
-        val userList = ArrayList<User>()
-
+        val userArray = arrayOf(User(), User())
+//        val userList = ArrayList<User>()
+//        userArray[0] = User()
         userReference.child(connectedUserId).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(error: DatabaseError) {
                 Timber.e(error.message)
@@ -211,8 +211,8 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue(User::class.java) ?: return
                 Timber.d("CURRENT TAGGER USER " + user.toString())
-                userList.add(0, user)
-                connectedUsers.postValue(userList)
+                userArray[0] = user
+                connectedUsers.postValue(userArray.toList())
             }
         })
 
@@ -222,8 +222,8 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
             }
 
             override fun onDataChange(snapshot: DataSnapshot) {
-                userList.add(1, snapshot.getValue(User::class.java)!!)
-                connectedUsers.postValue(userList)
+                userArray[1] = snapshot.getValue(User::class.java)!!
+                connectedUsers.postValue(userArray.toList())
             }
         })
 
