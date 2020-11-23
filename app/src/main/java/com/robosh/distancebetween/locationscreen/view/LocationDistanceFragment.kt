@@ -45,6 +45,11 @@ class LocationDistanceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         observeLocationChanges()
         initButtonClickListener()
+        locationDistanceViewModel.getCurrentUser().observe(viewLifecycleOwner, Observer {
+            if (it.connectedFriendId.isEmpty()) {
+                findNavController().popBackStack(R.id.homeScreenFragment, false)
+            }
+        })
     }
 
     override fun onDestroy() {

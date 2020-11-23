@@ -8,4 +8,6 @@ interface LocationDistanceRepository {
     fun listenUsersChanges(connectedUserId: String): LiveData<List<User>>
 
     fun stopSharingLocation(cachedUser: User?)
+
+    fun getCurrentUser(): LiveData<User>
 }

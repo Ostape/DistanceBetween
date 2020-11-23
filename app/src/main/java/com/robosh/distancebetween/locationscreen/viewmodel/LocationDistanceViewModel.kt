@@ -16,4 +16,8 @@ class LocationDistanceViewModel(
     fun stopShareLocation(cachedUser: User?) {
         locationDistanceRepository.stopSharingLocation(cachedUser)
     }
+
+    fun getCurrentUser(): LiveData<User> {
+        return locationDistanceRepository.getCurrentUser()
+    }
 }
