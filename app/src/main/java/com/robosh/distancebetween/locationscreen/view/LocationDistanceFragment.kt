@@ -74,7 +74,9 @@ class LocationDistanceFragment : Fragment() {
     }
 
     private fun navigateToHomeFragmentAndStopReceiveLocation() {
-        findNavController().popBackStack(R.id.homeScreenFragment, false)
+        if (findNavController().popBackStack(R.id.homeScreenFragment, false).not()) {
+            findNavController().navigate(R.id.action_locationDistanceFragment_to_homeScreenFragment)
+        }
         sendCommandService(ACTION_STOP_SERVICE)
     }
 
