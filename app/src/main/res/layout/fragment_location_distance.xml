@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,58 +8,130 @@
     android:padding="@dimen/standard_margin">
 
     <TextView
+        android:id="@+id/titleLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/location_distance_screen"
         android:textAlignment="center"
-        android:textSize="@dimen/xxtext_size" />
+        android:textSize="@dimen/xxtext_size"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/myCoordinatesTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/xmargin_size"
         android:text="@string/my_coordinates_longitude_latitude"
-        android:textSize="@dimen/xtext_size" />
+        android:textSize="@dimen/xtext_size"
+        app:layout_constraintTop_toBottomOf="@id/titleLocation" />
 
     <TextView
-        android:id="@+id/myLocationCoordinates"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/latitude"
+        android:textSize="@dimen/xtext_size"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/myCoordinatesTextView" />
+
+    <TextView
+        android:id="@+id/myLocationLatitude"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="textEnd"
         android:textSize="@dimen/xtext_size"
-        tools:text="123123,123123, 123123.12312" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorBlack" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/myCoordinatesTextView"
+        tools:text="123123,123123" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/longitude"
+        android:textSize="@dimen/xtext_size"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/myLocationLatitude" />
+
+    <TextView
+        android:id="@+id/myLocationLongitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="textEnd"
+        android:textSize="@dimen/xtext_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/myLocationLatitude"
+        tools:text="123123,123123" />
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_size"
+        android:background="@color/colorBlack"
+        app:layout_constraintTop_toBottomOf="@id/myLocationLongitude" />
+
+    <TextView
+        android:id="@+id/myFriendsLocationCoordinatesTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/standard_margin"
         android:text="@string/my_friends_coordinates_longitude_latitude"
-        android:textSize="@dimen/xtext_size" />
+        android:textSize="@dimen/xtext_size"
+        app:layout_constraintTop_toBottomOf="@id/divider1" />
 
     <TextView
-        android:id="@+id/myFriendsLocationCoordinates"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/latitude"
+        android:textSize="@dimen/xtext_size"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/myFriendsLocationCoordinatesTextView" />
+
+    <TextView
+        android:id="@+id/myFriendsLocationLatitude"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="textEnd"
         android:textSize="@dimen/xtext_size"
-        tools:text="123123,123123, 123123.12312" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorBlack" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/myFriendsLocationCoordinatesTextView"
+        tools:text="123123.12312" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/latitude"
+        android:textSize="@dimen/xtext_size"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/myFriendsLocationLatitude" />
+
+    <TextView
+        android:id="@+id/myFriendsLocationLongitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="textEnd"
+        android:textSize="@dimen/xtext_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/myFriendsLocationLatitude"
+        tools:text="123123.12312" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_size"
+        android:background="@color/colorBlack"
+        app:layout_constraintTop_toBottomOf="@id/myFriendsLocationLongitude" />
+
+    <TextView
+        android:id="@+id/distanceBetweenUsersTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/xmargin_size"
         android:text="@string/distance_between_users"
-        android:textSize="@dimen/xxtext_size" />
+        android:textSize="@dimen/xxtext_size"
+        app:layout_constraintTop_toBottomOf="@id/divider2" />
 
     <TextView
         android:id="@+id/distanceBetween"
@@ -66,7 +139,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/standard_margin"
         android:textColor="@color/colorPrimary"
-        android:textSize="@dimen/xtext_size"
+        android:textSize="@dimen/xxtext_size"
+        app:layout_constraintTop_toBottomOf="@id/distanceBetweenUsersTextView"
         tools:text="20km" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

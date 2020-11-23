@@ -64,22 +64,25 @@ class LocationDistanceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        cachedUser?.let {
-            locationDistanceViewModel.listenUsersChanges(it.connectedFriendId)
-                .observe(viewLifecycleOwner, Observer { users ->
-                    if (users.size > 1) {
-                        binding.myFriendsLocationCoordinates.text =
-                            users[CONNECTED_USER_INDEX].location.toString()
-                        binding.myLocationCoordinates.text =
-                            users[CURRENT_USER_INDEX].location.toString()
-                    }
-                })
-        }
+        observeLocationChanges()
     }
 
     override fun onDestroy() {
         sendCommandService(ACTION_STOP_SERVICE)
         super.onDestroy()
+    }
+
+    private fun observeLocationChanges() {
+        cachedUser?.let {
+            locationDistanceViewModel.listenUsersChanges(it.connectedFriendId)
+                .observe(viewLifecycleOwner, Observer { users ->
+//                    binding.myFriendsLocationCoordinates.text =
+//                        users[CONNECTED_USER_INDEX].location.toString()
+//                    binding.myLocationCoordinates.text =
+//                        users[CURRENT_USER_INDEX].location.toString()
+
+                })
+        }
     }
 
     private fun sendCommandService(action: String) {
