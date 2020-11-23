@@ -5,16 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import com.robosh.distancebetween.application.*
 import com.robosh.distancebetween.databinding.FragmentLocationDistanceBinding
+import com.robosh.distancebetween.locationscreen.viewmodel.LocationDistanceViewModel
 import com.robosh.distancebetween.locationservice.ForegroundLocationService
 import com.robosh.distancebetween.model.User
-
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class LocationDistanceFragment : Fragment() {
 
+    private val locationDistanceViewModel: LocationDistanceViewModel by viewModel()
     private lateinit var binding: FragmentLocationDistanceBinding
     private var cachedUser: User? = null
 
