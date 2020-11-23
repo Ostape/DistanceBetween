@@ -31,4 +31,7 @@
     <string name="latitude">Latitude:</string>
     <string name="longitude">Longitude:</string>
     <string name="stop_sharing">Stop sharing</string>
+    <string name="location_retriver">Location Retriever</string>
+    <string name="currently_getting_your_location_coordinates">Currently getting your location coordinates</string>
+    <string name="launch_application">Launch application</string>
 </resources>

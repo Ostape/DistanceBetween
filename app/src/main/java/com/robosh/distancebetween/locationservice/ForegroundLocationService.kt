@@ -133,13 +133,12 @@ class ForegroundLocationService : LifecycleService() {
                 }
             }
         })
-
     }
 
     private fun startForegroundService() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val titleText = "Title notification"
-        val mainNotificationText = "Notification message"
+        val titleText = getString(R.string.location_retriver)
+        val mainNotificationText = getString(R.string.currently_getting_your_location_coordinates)
         createNotificationChannel(titleText)
 
         val bigTextStyle = NotificationCompat.BigTextStyle()
@@ -168,7 +167,7 @@ class ForegroundLocationService : LifecycleService() {
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .addAction(
                 R.drawable.ic_launcher_foreground,
-                "Launch Activity",
+                getString(R.string.launch_application),
                 getMainActivityPendingIntent()
             )
     }
