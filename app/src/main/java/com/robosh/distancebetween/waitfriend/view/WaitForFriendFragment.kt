@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.robosh.distancebetween.R
 import com.robosh.distancebetween.application.ACCEPT_CONNECTION_DIALOG_TAG
-import com.robosh.distancebetween.application.INTENT_USER_FROM_WAIT_FRIEND
 import com.robosh.distancebetween.databinding.FragmentWaitForFriendBinding
 import com.robosh.distancebetween.model.User
 import com.robosh.distancebetween.waitfriend.viewmodel.WaitForFriendViewModel
@@ -48,10 +47,7 @@ class WaitForFriendFragment : Fragment(), AcceptConnectionDialog.OnAcceptConnect
     override fun onAcceptButtonClicked() {
         viewModel.acceptConnection()
         findNavController().navigate(
-            R.id.action_waitForFriendFragment_to_locationDistanceFragment,
-            Bundle().apply {
-                putParcelable(INTENT_USER_FROM_WAIT_FRIEND, cachedUser)
-            }
+            R.id.action_waitForFriendFragment_to_locationDistanceFragment
         )
     }
 

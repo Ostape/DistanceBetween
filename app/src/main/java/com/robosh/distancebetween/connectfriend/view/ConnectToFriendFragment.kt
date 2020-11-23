@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.robosh.distancebetween.R
-import com.robosh.distancebetween.application.INTENT_USER_FROM_CONNECT_TO_FRIEND
 import com.robosh.distancebetween.connectfriend.viewmodel.ConnectToFriendViewModel
 import com.robosh.distancebetween.databinding.FragmentConnectToFriendBinding
 import com.robosh.distancebetween.model.User
@@ -48,10 +47,7 @@ class ConnectToFriendFragment : Fragment(), ConnectFriendButtonCallback {
 
     private fun navigateToLocationDistanceFragment(it: User) {
         findNavController().navigate(
-            R.id.action_connectToFriendFragment_to_locationDistanceFragment,
-            Bundle().apply {
-                putParcelable(INTENT_USER_FROM_CONNECT_TO_FRIEND, it)
-            }
+            R.id.action_connectToFriendFragment_to_locationDistanceFragment
         )
     }
 
