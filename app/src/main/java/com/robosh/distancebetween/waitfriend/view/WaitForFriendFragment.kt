@@ -23,8 +23,7 @@ class WaitForFriendFragment : Fragment(), AcceptConnectionDialog.OnAcceptConnect
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // todo rename func
-        viewModel.makeCurrentUserAvailableForSharing().observe(this, Observer {
+        viewModel.waitForUserConnectionRequest().observe(this, Observer {
             showAcceptConnectionDialog(it)
         })
         viewModel.getCurrentUser().observe(this, Observer {

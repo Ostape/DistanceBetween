@@ -19,7 +19,7 @@ class WaitForFriendViewModel(
         return currentUser
     }
 
-    fun makeCurrentUserAvailableForSharing(): LiveData<User> {
+    fun waitForUserConnectionRequest(): LiveData<User> {
         return Transformations.switchMap(waitForFriendRepository.makeCurrentUserAvailableForSharing()) {
             currentUser.postValue(it)
             waitForFriendRepository.getUserById(it.connectedFriendId).also { user ->
