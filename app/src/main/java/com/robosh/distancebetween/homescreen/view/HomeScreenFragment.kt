@@ -1,12 +1,16 @@
 package com.robosh.distancebetween.homescreen.view
 
 import android.Manifest
+import android.content.Context
 import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -27,10 +31,12 @@ import com.robosh.distancebetween.databinding.FragmentHomeScreenBinding
 import com.robosh.distancebetween.homescreen.viewmodel.HomeScreenViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
+
 class HomeScreenFragment : Fragment() {
 
     private companion object {
         const val PACKAGE = "package"
+        const val VIBRATE_MILLISECONDS = 250L
     }
 
     private lateinit var binding: FragmentHomeScreenBinding
@@ -148,7 +154,25 @@ class HomeScreenFragment : Fragment() {
             true
         } else {
             showToast(getString(R.string.enable_gps_message))
+            vibrate()
             false
+        }
+    }
+
+    private fun vibrate() {
+        val vibrator: Vibrator? =
+            requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator?
+        vibrator?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        VIBRATE_MILLISECONDS,
+                        VibrationEffect.DEFAULT_AMPLITUDE
+                    )
+                )
+            } else {
+                vibrator.vibrate(VIBRATE_MILLISECONDS)
+            }
         }
     }
 
