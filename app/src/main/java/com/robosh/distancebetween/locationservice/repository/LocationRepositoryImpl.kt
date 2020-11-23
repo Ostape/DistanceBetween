@@ -2,8 +2,6 @@ package com.robosh.distancebetween.locationservice.repository
 
 import android.location.Location
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import com.robosh.distancebetween.application.getDistanceFromLatLonInKm
 import com.robosh.distancebetween.database.RealtimeDatabase
 import com.robosh.distancebetween.model.LocationCoordinates
 import com.robosh.distancebetween.model.User

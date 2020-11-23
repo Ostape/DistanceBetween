@@ -128,7 +128,7 @@ class ForegroundLocationService : LifecycleService() {
                     users?.let {
                         if (it.size > 1) {
                             sendWidgetBroadcast(
-                                getDistanceFromLatLonInKm(
+                                getDistanceFromLatLon(
                                     it[0].location,
                                     it[1].location
                                 )
@@ -197,7 +197,7 @@ class ForegroundLocationService : LifecycleService() {
         )
     }
 
-    private fun sendWidgetBroadcast(distance: Double) {
+    private fun sendWidgetBroadcast(distance: String) {
         val thisWidget = ComponentName(applicationContext, LocationWidgetProvider::class.java)
         val appWidgetManager = AppWidgetManager.getInstance(this.applicationContext)
         val allWidgetIds: IntArray = appWidgetManager.getAppWidgetIds(thisWidget)
@@ -205,8 +205,7 @@ class ForegroundLocationService : LifecycleService() {
         for (widgetId in allWidgetIds) {
             val remoteViews =
                 RemoteViews(this.applicationContext.packageName, R.layout.widget_location)
-                                                                            // todo make converter
-            remoteViews.setTextViewText(R.id.distanceBetweenValue, "${round(distance * 1000, 2)} m")
+            remoteViews.setTextViewText(R.id.distanceBetweenValue, distance)
             appWidgetManager.updateAppWidget(widgetId, remoteViews)
         }
     }
