@@ -27,29 +27,8 @@ class LocationDistanceFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getParcelable<User>(INTENT_USER_FROM_CONNECT_TO_FRIEND)?.let {
-            cachedUser = it
-        }
-        arguments?.getParcelable<User>(INTENT_USER_FROM_WAIT_FRIEND)?.let {
-            cachedUser = it
-        }
-
-        val callback: OnBackPressedCallback =
-            object : OnBackPressedCallback(true /* enabled by default */) {
-                override fun handleOnBackPressed() {
-
-
-                    // todo add navigation anim
-//                    val navOps = NavOptions.Builder()
-//                        .setExitAnim(R.anim.slide_out_to_left)
-//                        .setPopExitAnim(R.anim.slide_out_to_right)
-//                        .build()
-                    findNavController().navigate(
-                        R.id.homeScreenFragment
-                    )
-                }
-            }
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+        getArgumentsData()
+        initBackPressNavigation()
         sendCommandService(ACTION_START_OR_RESUME_SERVICE)
     }
 
@@ -70,6 +49,25 @@ class LocationDistanceFragment : Fragment() {
     override fun onDestroy() {
         sendCommandService(ACTION_STOP_SERVICE)
         super.onDestroy()
+    }
+
+    private fun initBackPressNavigation() {
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    findNavController().popBackStack(R.id.homeScreenFragment, false)
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    }
+
+    private fun getArgumentsData() {
+        arguments?.getParcelable<User>(INTENT_USER_FROM_CONNECT_TO_FRIEND)?.let {
+            cachedUser = it
+        }
+        arguments?.getParcelable<User>(INTENT_USER_FROM_WAIT_FRIEND)?.let {
+            cachedUser = it
+        }
     }
 
     private fun observeLocationChanges() {
