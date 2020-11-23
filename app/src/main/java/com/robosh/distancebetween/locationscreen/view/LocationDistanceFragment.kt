@@ -10,7 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.robosh.distancebetween.R
-import com.robosh.distancebetween.application.*
+import com.robosh.distancebetween.application.ACTION_START_OR_RESUME_SERVICE
+import com.robosh.distancebetween.application.ACTION_STOP_SERVICE
+import com.robosh.distancebetween.application.INTENT_USER_FOR_SERVICE
+import com.robosh.distancebetween.application.getDistanceFromLatLon
 import com.robosh.distancebetween.database.RealtimeDatabaseImpl.Companion.CONNECTED_USER_INDEX
 import com.robosh.distancebetween.database.RealtimeDatabaseImpl.Companion.CURRENT_USER_INDEX
 import com.robosh.distancebetween.databinding.FragmentLocationDistanceBinding
@@ -27,7 +30,6 @@ class LocationDistanceFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getArgumentsData()
         initBackPressNavigation()
         sendCommandService(ACTION_START_OR_RESUME_SERVICE)
     }
@@ -45,22 +47,18 @@ class LocationDistanceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         observeLocationChanges()
         initButtonClickListener()
-        locationDistanceViewModel.getCurrentUser().observe(viewLifecycleOwner, Observer {
+        locationDistanceViewModel.currentUser.observe(viewLifecycleOwner, Observer {
+            cachedUser = it
             if (it.connectedFriendId.isEmpty()) {
-                findNavController().popBackStack(R.id.homeScreenFragment, false)
+                navigateToHomeFragmentAndStopReceiveLocation()
             }
         })
-    }
-
-    override fun onDestroy() {
-        sendCommandService(ACTION_STOP_SERVICE)
-        super.onDestroy()
     }
 
     private fun initButtonClickListener() {
         binding.stopSharingLocationButton.setOnClickListener {
             locationDistanceViewModel.stopShareLocation(cachedUser)
-            findNavController().popBackStack(R.id.homeScreenFragment, false)
+            navigateToHomeFragmentAndStopReceiveLocation()
         }
     }
 
@@ -68,30 +66,25 @@ class LocationDistanceFragment : Fragment() {
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    findNavController().popBackStack(R.id.homeScreenFragment, false)
+                    locationDistanceViewModel.stopShareLocation(cachedUser)
+                    navigateToHomeFragmentAndStopReceiveLocation()
                 }
             }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
-    private fun getArgumentsData() {
-        arguments?.getParcelable<User>(INTENT_USER_FROM_CONNECT_TO_FRIEND)?.let {
-            cachedUser = it
-        }
-        arguments?.getParcelable<User>(INTENT_USER_FROM_WAIT_FRIEND)?.let {
-            cachedUser = it
-        }
+    private fun navigateToHomeFragmentAndStopReceiveLocation() {
+        findNavController().popBackStack(R.id.homeScreenFragment, false)
+        sendCommandService(ACTION_STOP_SERVICE)
     }
 
     private fun observeLocationChanges() {
-        cachedUser?.let {
-            locationDistanceViewModel.listenUsersChanges(it.connectedFriendId)
-                .observe(viewLifecycleOwner, Observer { users ->
-                    if (users.size > 1) {
-                        setViewData(users)
-                    }
-                })
-        }
+        locationDistanceViewModel.listenUsersChanges()
+            .observe(viewLifecycleOwner, Observer { users ->
+                if (users.size > 1) {
+                    setViewData(users)
+                }
+            })
     }
 
     private fun setViewData(users: List<User>) {
