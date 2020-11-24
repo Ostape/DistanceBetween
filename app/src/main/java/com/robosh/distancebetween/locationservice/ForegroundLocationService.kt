@@ -17,7 +17,7 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.Observer
 import com.google.android.gms.location.*
-import com.robosh.distancebetween.MainActivity
+import com.robosh.distancebetween.mainactivity.view.MainActivity
 import com.robosh.distancebetween.R
 import com.robosh.distancebetween.application.*
 import com.robosh.distancebetween.database.RealtimeDatabaseImpl.Companion.CONNECTED_USER_INDEX
