@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
+import com.robosh.distancebetween.application.EMPTY_STRING
 import com.robosh.distancebetween.model.LocationCoordinates
 import com.robosh.distancebetween.model.Resource
 import com.robosh.distancebetween.model.User
@@ -14,6 +15,10 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     companion object {
         const val CURRENT_USER_INDEX = 0
         const val CONNECTED_USER_INDEX = 1
+        const val LOCATION_FIELD = "location"
+        const val USERS_FIELD = "Users"
+        const val USER_AVAILABLE_FIELD = "userAvailable"
+        const val CONNECTED_FRIEND_ID_FIELD = "connectedFriendId"
     }
 
     private val rootNode: FirebaseDatabase = FirebaseDatabase.getInstance()
@@ -21,11 +26,11 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     private val currentUserId = FirebaseInstanceId.getInstance().id
 
     init {
-        userReference = rootNode.getReference("Users")
+        userReference = rootNode.getReference(USERS_FIELD)
     }
 
     override fun saveLocation(locationCoordinates: LocationCoordinates) {
-        userReference.child(currentUserId).child("location").setValue(locationCoordinates)
+        userReference.child(currentUserId).child(LOCATION_FIELD).setValue(locationCoordinates)
     }
 
     override fun isUserExistsInDatabase(): LiveData<Resource<User>> {
@@ -120,20 +125,19 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         return availableUsersLiveData
     }
 
-    // todo rework
     override fun setUserAvailabilityAndAddPairedUser(id: String) {
-        userReference.child(id).child("userAvailable").setValue(false)
-        userReference.child(id).child("connectedFriendId").setValue(currentUserId)
+        userReference.child(id).child(USER_AVAILABLE_FIELD).setValue(false)
+        userReference.child(id).child(CONNECTED_FRIEND_ID_FIELD).setValue(currentUserId)
     }
 
-    // todo rework
     override fun makeUserAvailableForSharing(): LiveData<User> {
         val userLiveData = MutableLiveData<User>()
-        userReference.child(currentUserId).child("userAvailable").setValue(true)
-
-        // todo add init block with onDisconnect action
-        userReference.child(currentUserId).child("userAvailable").onDisconnect().setValue(false)
-        userReference.child(currentUserId).child("connectedFriendId").onDisconnect().setValue("")
+        userReference.child(currentUserId).child(USER_AVAILABLE_FIELD).setValue(true)
+        userReference.child(currentUserId).child(USER_AVAILABLE_FIELD).onDisconnect()
+            .setValue(false)
+        userReference.child(currentUserId).child(CONNECTED_FRIEND_ID_FIELD).onDisconnect().setValue(
+            EMPTY_STRING
+        )
 
         userReference.child(currentUserId).addValueEventListener(object : ValueEventListener {
 
@@ -154,23 +158,24 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         return userLiveData
     }
 
-    // todo
     override fun makeUserNotAvailableForSharing() {
-        userReference.child(currentUserId).child("userAvailable").setValue(false)
-        userReference.child(currentUserId).child("connectedFriendId").setValue("")
+        userReference.child(currentUserId).child(USER_AVAILABLE_FIELD).setValue(false)
+        userReference.child(currentUserId).child(CONNECTED_FRIEND_ID_FIELD).setValue(EMPTY_STRING)
     }
 
-    // todo
     override fun getUserById(id: String): LiveData<User> {
         val user = MutableLiveData<User>()
         userReference.addChildEventListener(object : ChildEventListener {
             override fun onCancelled(error: DatabaseError) {
+                Timber.e(error.message)
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                Timber.d("onChildMoved")
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                Timber.d("onChildChanged")
             }
 
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -180,14 +185,15 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
+                Timber.d("onChildRemoved")
             }
         })
         return user
     }
 
     override fun rejectUserConnection() {
-        userReference.child(currentUserId).child("userAvailable").setValue(true)
-        userReference.child(currentUserId).child("connectedFriendId").setValue("")
+        userReference.child(currentUserId).child(USER_AVAILABLE_FIELD).setValue(true)
+        userReference.child(currentUserId).child(CONNECTED_FRIEND_ID_FIELD).setValue(EMPTY_STRING)
     }
 
     override fun acceptUserConnection(
@@ -195,7 +201,7 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
         currentUser: User?
     ) {
         if (currentUser != null) {
-            userReference.child(currentUser.connectedFriendId).child("connectedFriendId")
+            userReference.child(currentUser.connectedFriendId).child(CONNECTED_FRIEND_ID_FIELD)
                 .setValue(currentUserId)
         }
     }
@@ -236,10 +242,10 @@ class RealtimeDatabaseImpl : RealtimeDatabase {
     }
 
     override fun stopSharingLocation(cachedUser: User?) {
-        userReference.child(currentUserId).child("connectedFriendId").setValue("")
+        userReference.child(currentUserId).child(CONNECTED_FRIEND_ID_FIELD).setValue(EMPTY_STRING)
         cachedUser?.let {
-            userReference.child(cachedUser.connectedFriendId).child("connectedFriendId")
-                .setValue("")
+            userReference.child(cachedUser.connectedFriendId).child(CONNECTED_FRIEND_ID_FIELD)
+                .setValue(EMPTY_STRING)
         }
     }
 
